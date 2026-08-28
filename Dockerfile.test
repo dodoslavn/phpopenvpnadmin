@@ -1,0 +1,68 @@
+FROM debian:13
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update -qq && \
+    apt-get install -y -qq \
+        apache2 \
+        libapache2-mod-php \
+        php \
+        php-sqlite3 \
+        php-cli \
+        openssl \
+        sudo \
+        procps \
+        && rm -rf /var/lib/apt/lists/*
+
+# Enable mod_rewrite
+RUN a2enmod rewrite php8.4 headers
+
+# Create required directories
+RUN mkdir -p \
+        /var/lib/vpnadmin/pki \
+        /var/lib/vpnadmin/clients \
+        /var/lib/vpnadmin/db \
+        /var/lib/vpnadmin/.install \
+        /var/log/vpnadmin \
+        /etc/vpnadmin/ssl \
+    && chown www-data:www-data /var/lib/vpnadmin/db \
+    && chmod 700 /var/lib/vpnadmin/pki \
+    && chown root:www-data /var/lib/vpnadmin/clients \
+    && chmod 750 /var/lib/vpnadmin/clients
+
+# Deploy app
+COPY web/ /var/www/vpnadmin/
+COPY assets/ /var/www/vpnadmin/assets/
+COPY install/schema.sql /tmp/schema.sql
+
+# Permissions
+RUN chown -R root:www-data /var/www/vpnadmin \
+    && find /var/www/vpnadmin -type d -exec chmod 750 {} \; \
+    && find /var/www/vpnadmin -type f -exec chmod 640 {} \;
+
+# Apache vhost
+RUN cat > /etc/apache2/sites-available/vpnadmin.conf <<'EOF'
+<VirtualHost *:80>
+    DocumentRoot /var/www/vpnadmin
+    DirectoryIndex index.php
+    <Directory /var/www/vpnadmin>
+        Options -Indexes
+        AllowOverride All
+        Require all granted
+    </Directory>
+    <Directory /var/www/vpnadmin/includes>
+        Require all denied
+    </Directory>
+</VirtualHost>
+EOF
+
+RUN a2dissite 000-default && a2ensite vpnadmin
+
+# Init DB using schema file
+RUN php -r "\$db = new PDO('sqlite:/var/lib/vpnadmin/db/vpnadmin.db'); \$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); \$db->exec(file_get_contents('/tmp/schema.sql')); echo 'DB ready' . PHP_EOL;" \
+    && chown www-data:www-data /var/lib/vpnadmin/db/vpnadmin.db \
+    && chmod 660 /var/lib/vpnadmin/db/vpnadmin.db
+
+EXPOSE 80
+
+CMD ["apache2ctl", "-D", "FOREGROUND"]

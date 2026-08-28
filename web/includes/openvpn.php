@@ -1,0 +1,281 @@
+<?php
+require_once __DIR__ . '/config.php';
+
+/**
+ * Run a whitelisted privileged command via sudo.
+ * NEVER pass user input directly — only use pre-validated, sanitized values.
+ */
+function run_privileged(array $cmd): array {
+    $escaped = array_map('escapeshellarg', $cmd);
+    $cmdline = 'sudo ' . implode(' ', $escaped);
+    exec($cmdline . ' 2>&1', $output, $code);
+    return ['code' => $code, 'output' => implode("\n", $output)];
+}
+
+function safe_filename(string $name): string {
+    $clean = preg_replace('/[^a-zA-Z0-9_\-]/', '', $name);
+    if (strlen($clean) < 1 || strlen($clean) > 64) {
+        throw new InvalidArgumentException('Invalid profile name');
+    }
+    return $clean;
+}
+
+// ── PKI: First-run setup ──────────────────────────────────────────────────
+
+function pki_generate_ca(string $serverIp): bool {
+    $pki = PKI_DIR;
+
+    // Generate CA key
+    $r = run_privileged(['/usr/bin/openssl', 'genrsa', '-out', "{$pki}/ca.key", '4096']);
+    if ($r['code'] !== 0) return false;
+
+    // Generate CA cert (self-signed, 10 years)
+    $r = run_privileged([
+        '/usr/bin/openssl', 'req', '-x509', '-new', '-nodes',
+        '-key', "{$pki}/ca.key",
+        '-sha256', '-days', '3650',
+        '-out', "{$pki}/ca.crt",
+        '-subj', "/CN=phpopenvpnadmin-CA/O=vpnadmin/C=EU"
+    ]);
+    if ($r['code'] !== 0) return false;
+
+    // Secure the CA key
+    run_privileged(['/bin/chmod', '600', "{$pki}/ca.key"]);
+    run_privileged(['/bin/chmod', '644', "{$pki}/ca.crt"]);
+
+    return true;
+}
+
+function pki_generate_server_cert(string $serverIp): bool {
+    $pki = PKI_DIR;
+
+    // Server key
+    $r = run_privileged(['/usr/bin/openssl', 'genrsa', '-out', "{$pki}/server.key", '4096']);
+    if ($r['code'] !== 0) return false;
+
+    // Server CSR
+    $r = run_privileged([
+        '/usr/bin/openssl', 'req', '-new',
+        '-key', "{$pki}/server.key",
+        '-out', "{$pki}/server.csr",
+        '-subj', "/CN=vpn-server/O=vpnadmin/C=EU"
+    ]);
+    if ($r['code'] !== 0) return false;
+
+    // Sign with CA
+    $r = run_privileged([
+        '/usr/bin/openssl', 'x509', '-req',
+        '-in', "{$pki}/server.csr",
+        '-CA', "{$pki}/ca.crt",
+        '-CAkey', "{$pki}/ca.key",
+        '-CAcreateserial',
+        '-out', "{$pki}/server.crt",
+        '-days', '3650',
+        '-sha256'
+    ]);
+    if ($r['code'] !== 0) return false;
+
+    run_privileged(['/bin/chmod', '600', "{$pki}/server.key"]);
+    run_privileged(['/bin/chmod', '644', "{$pki}/server.crt"]);
+
+    return true;
+}
+
+function pki_generate_dh(): bool {
+    $r = run_privileged([
+        '/usr/bin/openssl', 'dhparam',
+        '-out', PKI_DIR . '/dh.pem',
+        '2048'
+    ]);
+    return $r['code'] === 0;
+}
+
+function pki_generate_ta_key(): bool {
+    $r = run_privileged([
+        '/usr/sbin/openvpn', '--genkey', 'secret',
+        PKI_DIR . '/ta.key'
+    ]);
+    return $r['code'] === 0;
+}
+
+function pki_generate_crl(): bool {
+    // Create an empty CRL — updated when certs are revoked
+    $pki = PKI_DIR;
+
+    // Create minimal openssl.cnf for CRL generation
+    $cnf = "[ca]\ndefault_ca = CA_default\n[CA_default]\ndatabase = {$pki}/index.txt\ncrlnumber = {$pki}/crlnumber\n[crl_ext]\n";
+    file_put_contents('/tmp/vpnadmin-crl.cnf', $cnf);
+
+    if (!file_exists("{$pki}/index.txt"))  file_put_contents("{$pki}/index.txt", '');
+    if (!file_exists("{$pki}/crlnumber"))  file_put_contents("{$pki}/crlnumber", '01');
+
+    $r = run_privileged([
+        '/usr/bin/openssl', 'ca',
+        '-config', '/tmp/vpnadmin-crl.cnf',
+        '-gencrl',
+        '-keyfile', "{$pki}/ca.key",
+        '-cert', "{$pki}/ca.crt",
+        '-out', "{$pki}/crl.pem"
+    ]);
+
+    return $r['code'] === 0;
+}
+
+// ── Client certificate generation ────────────────────────────────────────
+
+function generate_client_cert(string $name, int $userId): ?array {
+    $name  = safe_filename($name);
+    $pki   = PKI_DIR;
+    $dir   = CLIENTS_DIR . "/{$userId}_{$name}";
+
+    // Prevent overwrite
+    if (is_dir($dir)) return null;
+    mkdir($dir, 0700, true);
+
+    // Client key
+    $r = run_privileged(['/usr/bin/openssl', 'genrsa', '-out', "{$dir}/client.key", '4096']);
+    if ($r['code'] !== 0) return null;
+
+    // CSR
+    $r = run_privileged([
+        '/usr/bin/openssl', 'req', '-new',
+        '-key', "{$dir}/client.key",
+        '-out', "{$dir}/client.csr",
+        '-subj', "/CN={$name}/O=vpnadmin/C=EU"
+    ]);
+    if ($r['code'] !== 0) return null;
+
+    // Sign
+    $serial = strtoupper(bin2hex(random_bytes(8)));
+    $r = run_privileged([
+        '/usr/bin/openssl', 'x509', '-req',
+        '-in', "{$dir}/client.csr",
+        '-CA', "{$pki}/ca.crt",
+        '-CAkey', "{$pki}/ca.key",
+        '-set_serial', '0x' . $serial,
+        '-out', "{$dir}/client.crt",
+        '-days', '3650',
+        '-sha256'
+    ]);
+    if ($r['code'] !== 0) return null;
+
+    run_privileged(['/bin/chmod', '600', "{$dir}/client.key"]);
+    run_privileged(['/bin/chmod', '644', "{$dir}/client.crt"]);
+
+    return [
+        'serial' => $serial,
+        'dir'    => $dir,
+    ];
+}
+
+function build_ovpn(string $name, int $userId, string $serverIp, int $port = 1194): ?string {
+    $name = safe_filename($name);
+    $pki  = PKI_DIR;
+    $dir  = CLIENTS_DIR . "/{$userId}_{$name}";
+
+    $ca     = file_get_contents("{$pki}/ca.crt");
+    $cert   = file_get_contents("{$dir}/client.crt");
+    $key    = file_get_contents("{$dir}/client.key");
+    $taKey  = file_get_contents("{$pki}/ta.key");
+
+    if (!$ca || !$cert || !$key || !$taKey) return null;
+
+    $serverIp = filter_var($serverIp, FILTER_VALIDATE_IP) ?: 'INVALID';
+    $port     = max(1, min(65535, $port));
+
+    return <<<OVPN
+client
+dev tun
+proto udp
+remote {$serverIp} {$port}
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+auth-user-pass
+auth SHA256
+cipher AES-256-GCM
+tls-version-min 1.2
+verb 3
+
+<ca>
+{$ca}</ca>
+
+<cert>
+{$cert}</cert>
+
+<key>
+{$key}</key>
+
+<tls-auth>
+{$taKey}</tls-auth>
+key-direction 1
+OVPN;
+}
+
+// ── Certificate revocation ────────────────────────────────────────────────
+
+function revoke_client_cert(string $serial): bool {
+    $pki  = PKI_DIR;
+
+    // Find the cert file by serial
+    $certFile = null;
+    foreach (glob(CLIENTS_DIR . '/*/client.crt') as $f) {
+        $out = shell_exec("openssl x509 -in " . escapeshellarg($f) . " -noout -serial 2>/dev/null");
+        if ($out && strpos(strtoupper($out), strtoupper($serial)) !== false) {
+            $certFile = $f;
+            break;
+        }
+    }
+
+    if (!$certFile) return false;
+
+    $r = run_privileged([
+        '/usr/bin/openssl', 'ca',
+        '-config', "{$pki}/openssl.cnf",
+        '-revoke', $certFile,
+        '-keyfile', "{$pki}/ca.key",
+        '-cert', "{$pki}/ca.crt"
+    ]);
+    if ($r['code'] !== 0) return false;
+
+    // Regenerate CRL
+    return pki_generate_crl();
+}
+
+// ── OpenVPN status ────────────────────────────────────────────────────────
+
+function openvpn_status(): array {
+    $r = run_privileged(['/usr/bin/cat', OVPN_STATUS]);
+    if ($r['code'] !== 0) return [];
+
+    $clients = [];
+    $inClients = false;
+
+    foreach (explode("\n", $r['output']) as $line) {
+        if (str_starts_with($line, 'Common Name')) { $inClients = true; continue; }
+        if (str_starts_with($line, 'ROUTING'))     { $inClients = false; continue; }
+        if (!$inClients || trim($line) === '')      continue;
+
+        $parts = explode(',', $line);
+        if (count($parts) >= 4) {
+            $clients[] = [
+                'name'        => $parts[0],
+                'remote_ip'   => $parts[1],
+                'bytes_rx'    => $parts[2],
+                'bytes_tx'    => $parts[3],
+                'connected'   => $parts[4] ?? '',
+            ];
+        }
+    }
+
+    return $clients;
+}
+
+function openvpn_service_action(string $action): bool {
+    $allowed = ['start', 'stop', 'restart'];
+    if (!in_array($action, $allowed, true)) return false;
+
+    $r = run_privileged(['/bin/systemctl', $action, 'openvpn-server@server']);
+    return $r['code'] === 0;
+}
