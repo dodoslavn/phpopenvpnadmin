@@ -39,7 +39,6 @@ function pki_generate_ca(string $serverIp): bool {
     ]);
     if ($r['code'] !== 0) return false;
 
-    // Secure the CA key
     run_privileged(['/bin/chmod', '600', "{$pki}/ca.key"]);
     run_privileged(['/bin/chmod', '644', "{$pki}/ca.crt"]);
 
@@ -91,33 +90,27 @@ function pki_generate_dh(): bool {
 }
 
 function pki_generate_ta_key(): bool {
-    $r = run_privileged([
-        '/usr/sbin/openvpn', '--genkey', 'secret',
-        PKI_DIR . '/ta.key'
-    ]);
-    return $r['code'] === 0;
+    $pki = PKI_DIR;
+    $r = run_privileged(['/usr/sbin/openvpn', '--genkey', 'secret', "{$pki}/ta.key"]);
+    if ($r['code'] !== 0) return false;
+
+    // 640 root:www-data so PHP can read it for .ovpn generation without sudo
+    run_privileged(['/bin/chown', 'root:www-data', "{$pki}/ta.key"]);
+    run_privileged(['/bin/chmod', '640', "{$pki}/ta.key"]);
+    return true;
 }
 
 function pki_generate_crl(): bool {
-    // Create an empty CRL — updated when certs are revoked
+    // openssl.cnf, index.txt, crlnumber are created by the installer in PKI_DIR
     $pki = PKI_DIR;
-
-    // Create minimal openssl.cnf for CRL generation
-    $cnf = "[ca]\ndefault_ca = CA_default\n[CA_default]\ndatabase = {$pki}/index.txt\ncrlnumber = {$pki}/crlnumber\n[crl_ext]\n";
-    file_put_contents('/tmp/vpnadmin-crl.cnf', $cnf);
-
-    if (!file_exists("{$pki}/index.txt"))  file_put_contents("{$pki}/index.txt", '');
-    if (!file_exists("{$pki}/crlnumber"))  file_put_contents("{$pki}/crlnumber", '01');
-
     $r = run_privileged([
         '/usr/bin/openssl', 'ca',
-        '-config', '/tmp/vpnadmin-crl.cnf',
+        '-config', "{$pki}/openssl.cnf",
         '-gencrl',
         '-keyfile', "{$pki}/ca.key",
         '-cert', "{$pki}/ca.crt",
         '-out', "{$pki}/crl.pem"
     ]);
-
     return $r['code'] === 0;
 }
 
@@ -130,7 +123,8 @@ function generate_client_cert(string $name, int $userId): ?array {
 
     // Prevent overwrite
     if (is_dir($dir)) return null;
-    mkdir($dir, 0700, true);
+    // CLIENTS_DIR is 770 root:www-data so www-data can create subdirs
+    if (!mkdir($dir, 0750, true)) return null;
 
     // Client key
     $r = run_privileged(['/usr/bin/openssl', 'genrsa', '-out', "{$dir}/client.key", '4096']);
@@ -159,7 +153,9 @@ function generate_client_cert(string $name, int $userId): ?array {
     ]);
     if ($r['code'] !== 0) return null;
 
-    run_privileged(['/bin/chmod', '600', "{$dir}/client.key"]);
+    // 640 root:www-data so PHP can read the key for .ovpn generation without sudo
+    run_privileged(['/bin/chown', 'root:www-data', "{$dir}/client.key"]);
+    run_privileged(['/bin/chmod', '640', "{$dir}/client.key"]);
     run_privileged(['/bin/chmod', '644', "{$dir}/client.crt"]);
 
     return [
@@ -270,6 +266,57 @@ function openvpn_status(): array {
     }
 
     return $clients;
+}
+
+function apply_server_conf(int $port): bool {
+    $port = max(1, min(65535, $port));
+    $conf = <<<CONF
+# OpenVPN Server Configuration — managed by phpopenvpnadmin
+port {$port}
+proto udp
+dev tun
+
+ca   /var/lib/vpnadmin/pki/ca.crt
+cert /var/lib/vpnadmin/pki/server.crt
+key  /var/lib/vpnadmin/pki/server.key
+dh   /var/lib/vpnadmin/pki/dh.pem
+
+tls-auth /var/lib/vpnadmin/pki/ta.key 0
+key-direction 0
+
+cipher AES-256-GCM
+auth SHA256
+tls-version-min 1.2
+
+server 10.8.0.0 255.255.255.0
+
+push "redirect-gateway def1 bypass-dhcp"
+push "dhcp-option DNS 10.8.0.1"
+
+keepalive 10 120
+
+user nobody
+group nogroup
+persist-key
+persist-tun
+
+status      /var/log/vpnadmin/openvpn-status.log
+log-append  /var/log/vpnadmin/openvpn.log
+verb 3
+
+auth-user-pass-verify /usr/local/bin/vpn-check-password.sh via-env
+username-as-common-name
+script-security 2
+
+crl-verify /var/lib/vpnadmin/pki/crl.pem
+CONF;
+
+    // Write to /tmp then sudo cp into place — avoids complex sed sudoers rules
+    $tmp = '/tmp/vpnadmin-server.conf';
+    if (file_put_contents($tmp, $conf) === false) return false;
+    $r = run_privileged(['/bin/cp', $tmp, OVPN_CONF]);
+    unlink($tmp);
+    return $r['code'] === 0;
 }
 
 function openvpn_service_action(string $action): bool {

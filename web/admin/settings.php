@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/openvpn.php';
 require_once __DIR__ . '/../includes/template.php';
 
 $admin   = require_admin();
@@ -21,7 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         setting_set('server_ip', $serverIp);
         setting_set('vpn_port',  (string) $vpnPort);
-        $message = 'Settings saved. New profiles will use the updated values.';
+        apply_server_conf($vpnPort);
+        $message = 'Settings saved. Restart OpenVPN on the Server Status page for port changes to take effect.';
         $msgType = 'success';
     }
 }

@@ -31,7 +31,7 @@ function current_user(): ?array {
 
     if (!$row) return null;
     if (!$row['enabled']) return null;
-    if (strtotime($row['expires_at']) < time()) {
+    if (strtotime($row['expires_at'] . ' UTC') < time()) {
         logout();
         return null;
     }
@@ -66,7 +66,7 @@ function login(string $username, string $password): bool {
     if (!password_verify($password, $user['password_hash'])) return false;
 
     $token = bin2hex(random_bytes(32));
-    $expires = date('Y-m-d H:i:s', time() + SESSION_LIFETIME);
+    $expires = gmdate('Y-m-d H:i:s', time() + SESSION_LIFETIME);
 
     db()->prepare('INSERT INTO sessions (user_id, token, expires_at) VALUES (?, ?, ?)')
        ->execute([$user['id'], $token, $expires]);

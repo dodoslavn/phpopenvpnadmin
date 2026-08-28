@@ -128,6 +128,11 @@ html_head('Setup Wizard');
         $log('Creating admin account...');
         create_user($adminUser, $adminPass, 'admin');
 
+        $log('Writing OpenVPN server configuration...');
+        if (!apply_server_conf($port)) {
+            $log('Warning: Could not write server.conf — check permissions.');
+        }
+
         $log('Starting OpenVPN...');
         if (!openvpn_service_action('start')) {
             $log('Warning: OpenVPN start failed — check server logs. PKI is ready.');

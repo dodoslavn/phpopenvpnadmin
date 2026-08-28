@@ -26,9 +26,13 @@ RUN mkdir -p \
         /var/log/vpnadmin \
         /etc/vpnadmin/ssl \
     && chown www-data:www-data /var/lib/vpnadmin/db \
-    && chmod 700 /var/lib/vpnadmin/pki \
+    && chown root:www-data /var/lib/vpnadmin/pki \
+    && chmod 750 /var/lib/vpnadmin/pki \
     && chown root:www-data /var/lib/vpnadmin/clients \
-    && chmod 750 /var/lib/vpnadmin/clients
+    && chmod 770 /var/lib/vpnadmin/clients \
+    && touch /var/lib/vpnadmin/pki/index.txt \
+    && printf '[ca]\ndefault_ca = CA_default\n[CA_default]\ndatabase = /var/lib/vpnadmin/pki/index.txt\ncrlnumber = /var/lib/vpnadmin/pki/crlnumber\ndefault_md = sha256\ndefault_crl_days = 30\n[crl_ext]\nauthorityKeyIdentifier = keyid:always\n' > /var/lib/vpnadmin/pki/openssl.cnf \
+    && echo '01' > /var/lib/vpnadmin/pki/crlnumber
 
 # Deploy app
 COPY web/ /var/www/vpnadmin/

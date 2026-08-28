@@ -19,19 +19,43 @@ for dir in "${dirs[@]}"; do
     log "Created: ${dir}"
 done
 
-# PKI must be root-only — very sensitive
-chmod 700 /var/lib/vpnadmin/pki
-chown root:root /var/lib/vpnadmin/pki
-log "Secured /var/lib/vpnadmin/pki (700 root:root)"
+# PKI: root owns, www-data can traverse (needed to read ca.crt, ta.key with 640 perms)
+chown root:www-data /var/lib/vpnadmin/pki
+chmod 750 /var/lib/vpnadmin/pki
+log "Set /var/lib/vpnadmin/pki (750 root:www-data)"
 
 # DB dir writable by www-data
 chown www-data:www-data /var/lib/vpnadmin/db
 chmod 750 /var/lib/vpnadmin/db
 log "Set /var/lib/vpnadmin/db ownership to www-data"
 
-# Clients dir: root owns, www-data can read (for download)
+# Clients dir: www-data can create subdirs (for cert generation) and list (for glob)
 chown root:www-data /var/lib/vpnadmin/clients
-chmod 750 /var/lib/vpnadmin/clients
-log "Set /var/lib/vpnadmin/clients ownership"
+chmod 770 /var/lib/vpnadmin/clients
+log "Set /var/lib/vpnadmin/clients (770 root:www-data)"
+
+# Create openssl.cnf for CRL generation — used by both setup wizard and revocation
+PKI="/var/lib/vpnadmin/pki"
+cat > "${PKI}/openssl.cnf" << 'OPENSSL_EOF'
+[ca]
+default_ca = CA_default
+
+[CA_default]
+database    = /var/lib/vpnadmin/pki/index.txt
+crlnumber   = /var/lib/vpnadmin/pki/crlnumber
+default_md  = sha256
+default_crl_days = 30
+
+[crl_ext]
+authorityKeyIdentifier = keyid:always
+OPENSSL_EOF
+
+# Create empty CRL database files
+touch "${PKI}/index.txt"
+echo '01' > "${PKI}/crlnumber"
+
+chown root:root "${PKI}/openssl.cnf" "${PKI}/index.txt" "${PKI}/crlnumber"
+chmod 644 "${PKI}/openssl.cnf" "${PKI}/index.txt" "${PKI}/crlnumber"
+log "Created PKI support files (openssl.cnf, index.txt, crlnumber)"
 
 complete_step
