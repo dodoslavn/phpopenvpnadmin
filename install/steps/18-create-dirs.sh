@@ -24,10 +24,10 @@ chown root:www-data /var/lib/vpnadmin/pki
 chmod 750 /var/lib/vpnadmin/pki
 log "Set /var/lib/vpnadmin/pki (750 root:www-data)"
 
-# DB dir writable by www-data
+# DB dir: 770 so www-data group (incl. nobody for OpenVPN auth script) can create WAL files
 chown www-data:www-data /var/lib/vpnadmin/db
-chmod 750 /var/lib/vpnadmin/db
-log "Set /var/lib/vpnadmin/db ownership to www-data"
+chmod 770 /var/lib/vpnadmin/db
+log "Set /var/lib/vpnadmin/db (770 www-data:www-data)"
 
 # Clients dir: www-data can create subdirs (for cert generation) and list (for glob)
 chown root:www-data /var/lib/vpnadmin/clients

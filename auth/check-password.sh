@@ -14,14 +14,14 @@ if ! echo "$username" | grep -qE '^[a-z0-9_]{1,32}$'; then
     exit 1
 fi
 
-# Pass credentials via env to avoid injecting them into PHP code
+# Open DB read-only (SQLITE3_OPEN_READONLY=1) so WAL/SHM files are never needed.
+# Credentials passed via env vars to avoid shell injection.
 result=$(VPN_USER="$username" VPN_PASS="$password" VPN_DB="$DB" php -r "
     try {
-        \$db = new PDO('sqlite:' . getenv('VPN_DB'));
-        \$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        \$db = new SQLite3(getenv('VPN_DB'), SQLITE3_OPEN_READONLY);
         \$stmt = \$db->prepare('SELECT password_hash, enabled FROM users WHERE username = ?');
-        \$stmt->execute([strtolower(trim(getenv('VPN_USER')))]);
-        \$row = \$stmt->fetch(PDO::FETCH_ASSOC);
+        \$stmt->bindValue(1, strtolower(trim(getenv('VPN_USER'))), SQLITE3_TEXT);
+        \$row = \$stmt->execute()->fetchArray(SQLITE3_ASSOC);
         if (\$row && \$row['enabled'] && password_verify(getenv('VPN_PASS'), \$row['password_hash'])) {
             echo 'ok';
         } else {
