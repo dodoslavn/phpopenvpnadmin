@@ -302,6 +302,9 @@ auth-user-pass-verify /etc/openvpn/server/check-password.sh via-env
 username-as-common-name
 script-security 3
 
+up   /etc/openvpn/server/up.sh
+down /etc/openvpn/server/down.sh
+
 crl-verify /var/lib/vpnadmin/pki/crl.pem
 CONF;
 

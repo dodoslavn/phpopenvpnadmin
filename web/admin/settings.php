@@ -42,8 +42,8 @@ html_nav($admin);
     <div class="section">
         <h3>VPN Server</h3>
         <form method="post" class="form-grid">
-            <label>Server Public IP
-                <input type="text" name="server_ip" value="<?= h($serverIp) ?>" required>
+            <label>Server Public IP or Hostname
+                <input type="text" name="server_ip" value="<?= h($serverIp) ?>" placeholder="1.2.3.4 or vpn.example.com" required>
             </label>
             <label>VPN Port (UDP)
                 <input type="number" name="vpn_port" value="<?= h($vpnPort) ?>"

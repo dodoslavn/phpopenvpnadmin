@@ -27,8 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Password must be at least 8 characters.';
     if ($adminPass !== $adminPass2)
         $errors[] = 'Passwords do not match.';
-    if (!filter_var($serverIp, FILTER_VALIDATE_IP))
-        $errors[] = 'Invalid server IP address.';
+    if (!filter_var($serverIp, FILTER_VALIDATE_IP) && !preg_match('/^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$/', $serverIp))
+        $errors[] = 'Invalid server IP address or hostname.';
     if ($port < 1 || $port > 65535)
         $errors[] = 'Invalid port number.';
 
@@ -65,8 +65,8 @@ html_head('Setup Wizard');
             </fieldset>
             <fieldset>
                 <legend>VPN Server</legend>
-                <label>Server Public IP
-                    <input type="text" name="server_ip" required placeholder="1.2.3.4"
+                <label>Server Public IP or Hostname
+                    <input type="text" name="server_ip" required placeholder="1.2.3.4 or vpn.example.com"
                            value="<?= h($_POST['server_ip'] ?? '') ?>">
                 </label>
                 <label>VPN Port (UDP)
