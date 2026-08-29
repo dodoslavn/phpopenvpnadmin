@@ -30,6 +30,13 @@ $totalProfiles = db()->query('SELECT COUNT(*) FROM profiles WHERE revoked = 0')-
 $serverIp   = setting('server_ip', 'not set');
 $vpnPort    = setting('vpn_port', '1194');
 
+$services = [
+    'OpenVPN'       => service_status('openvpn-server@server'),
+    'Unbound DNS'   => service_status('unbound'),
+    'Apache'        => service_status('apache2'),
+];
+$ipForward = ip_forward_enabled();
+
 html_head('Server Status');
 html_nav($user);
 ?>
@@ -55,6 +62,39 @@ html_nav($user);
             <span class="stat-value"><?= h($serverIp) ?>:<?= h($vpnPort) ?></span>
             <span class="stat-label">VPN Endpoint</span>
         </div>
+    </div>
+
+    <div class="section">
+        <h3>Services</h3>
+        <table>
+            <thead>
+                <tr><th>Service</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+                <?php foreach ($services as $name => $status): ?>
+                <tr>
+                    <td><?= h($name) ?></td>
+                    <td>
+                        <?php if ($status === 'active'): ?>
+                            <span class="badge badge-ok">Running</span>
+                        <?php else: ?>
+                            <span class="badge badge-off">Stopped</span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+                <tr>
+                    <td>IP Forwarding</td>
+                    <td>
+                        <?php if ($ipForward): ?>
+                            <span class="badge badge-ok">Enabled</span>
+                        <?php else: ?>
+                            <span class="badge badge-off">Disabled</span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
     <div class="section">

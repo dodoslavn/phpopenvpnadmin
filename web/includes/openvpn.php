@@ -319,6 +319,16 @@ CONF;
     return $r['code'] === 0;
 }
 
+function service_status(string $service): string {
+    exec('systemctl is-active ' . escapeshellarg($service) . ' 2>/dev/null', $out, $code);
+    return $code === 0 ? 'active' : 'inactive';
+}
+
+function ip_forward_enabled(): bool {
+    $val = trim((string) @file_get_contents('/proc/sys/net/ipv4/ip_forward'));
+    return $val === '1';
+}
+
 function openvpn_service_action(string $action): bool {
     $allowed = ['start', 'stop', 'restart'];
     if (!in_array($action, $allowed, true)) return false;
