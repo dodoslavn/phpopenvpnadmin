@@ -21,11 +21,12 @@ function html_nav(array $user): void {
     $isAdmin  = $role === 'admin';
 
     echo <<<HTML
-<nav>
+<nav id="mainnav">
     <div class="nav-brand">
-        <img src="/assets/logo.svg" alt="logo" height="28"> phpopenvpnadmin
+        <img src="/assets/logo.svg" alt="logo" height="28"> PHP OpenVPN Admin
     </div>
-    <ul>
+    <button class="nav-toggle" aria-label="Menu" onclick="document.getElementById('mainnav').classList.toggle('open')">&#9776;</button>
+    <ul class="nav-links">
         <li><a href="/user/dashboard.php">My Profiles</a></li>
 HTML;
     if ($isAdmin) {
@@ -35,7 +36,7 @@ HTML;
     }
     echo <<<HTML
     </ul>
-    <div class="nav-user">
+    <div class="nav-user nav-links">
         <span>{$username}</span> <span class="badge">{$role}</span>
         <a href="/logout.php">Logout</a>
     </div>
