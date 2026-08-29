@@ -1,5 +1,5 @@
 <?php
-define('APP_NAME',    'phpopenvpnadmin');
+define('APP_NAME',    'PHP OpenVPN Admin');
 define('APP_VERSION', '1.0.0');
 
 define('DB_PATH',      '/var/lib/vpnadmin/db/vpnadmin.db');
