@@ -66,7 +66,7 @@ html_nav($user);
 
     <div class="section">
         <h3>Services</h3>
-        <table>
+        <div class="table-wrap"><table>
             <thead>
                 <tr><th>Service</th><th>Status</th></tr>
             </thead>
@@ -94,7 +94,7 @@ html_nav($user);
                     </td>
                 </tr>
             </tbody>
-        </table>
+        </table></div>
     </div>
 
     <div class="section">
@@ -102,7 +102,7 @@ html_nav($user);
         <?php if (empty($clients)): ?>
             <p class="muted">No clients connected.</p>
         <?php else: ?>
-            <table>
+            <div class="table-wrap"><table>
                 <thead>
                     <tr><th>Name</th><th>Remote IP</th><th>Bytes RX</th><th>Bytes TX</th><th>Connected Since</th></tr>
                 </thead>
@@ -117,7 +117,7 @@ html_nav($user);
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
-            </table>
+            </table></div>
         <?php endif; ?>
     </div>
 

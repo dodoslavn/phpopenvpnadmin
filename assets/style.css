@@ -27,11 +27,11 @@ body {
 nav {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    flex-wrap: wrap;
+    gap: .75rem 1.5rem;
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    padding: 0 1.5rem;
-    height: 52px;
+    padding: .75rem 1.5rem;
 }
 .nav-brand {
     display: flex;
@@ -39,12 +39,14 @@ nav {
     gap: .5rem;
     font-weight: 600;
     font-size: 15px;
-    margin-right: auto;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
 }
-nav ul { display: flex; gap: 1rem; list-style: none; }
-nav ul a { color: var(--text); text-decoration: none; font-weight: 500; }
+nav ul { display: flex; gap: .75rem; list-style: none; flex-wrap: wrap; }
+nav ul a { color: var(--text); text-decoration: none; font-weight: 500; white-space: nowrap; }
 nav ul a:hover { color: var(--primary); }
-.nav-user { display: flex; align-items: center; gap: .75rem; color: var(--muted); }
+.nav-user { display: flex; align-items: center; gap: .75rem; color: var(--muted); white-space: nowrap; }
 .nav-user a { color: var(--primary); text-decoration: none; }
 
 /* ── Main content ────────────────────────────────── */
@@ -64,7 +66,8 @@ h3 { font-size: 15px; margin-bottom: 1rem; color: var(--muted); text-transform: 
 .stat-label { display: block; color: var(--muted); font-size: 12px; margin-top: .25rem; }
 
 /* ── Table ───────────────────────────────────────── */
-table { width: 100%; border-collapse: collapse; }
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { width: 100%; border-collapse: collapse; min-width: 400px; }
 th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); padding: .5rem .75rem; border-bottom: 2px solid var(--border); }
 td { padding: .6rem .75rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
 tr:last-child td { border-bottom: none; }
@@ -158,3 +161,25 @@ button:hover, .btn:hover { background: var(--primary-hover); }
 .muted { color: var(--muted); }
 code { font-family: monospace; background: var(--border); padding: 1px 5px; border-radius: 3px; }
 p { margin-bottom: .75rem; }
+
+/* ── Mobile ──────────────────────────────────────── */
+@media (max-width: 600px) {
+    nav { padding: .6rem 1rem; gap: .5rem 1rem; }
+    main { margin: 1rem auto; padding: 0 .75rem; }
+    .section { padding: 1rem; }
+
+    .stat-row { grid-template-columns: repeat(2, 1fr); gap: .75rem; }
+
+    .login-box, .wizard-box {
+        padding: 1.5rem 1rem;
+        margin: .75rem;
+        max-width: 100%;
+    }
+
+    .form-grid { max-width: 100%; }
+
+    /* Stack inline action buttons vertically */
+    .inline-form { display: block; margin-top: .35rem; }
+
+    td, th { padding: .5rem; font-size: 13px; }
+}

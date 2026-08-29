@@ -102,7 +102,7 @@ html_nav($admin);
 
     <div class="section">
         <h3>All Users</h3>
-        <table>
+        <div class="table-wrap"><table>
             <thead>
                 <tr><th>Username</th><th>Role</th><th>Profiles</th><th>Status</th><th>Created</th><th>Actions</th></tr>
             </thead>
@@ -137,7 +137,7 @@ html_nav($admin);
                 </tr>
                 <?php endforeach; ?>
             </tbody>
-        </table>
+        </table></div>
     </div>
 </main>
 <?php html_foot(); ?>

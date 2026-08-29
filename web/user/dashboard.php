@@ -46,7 +46,7 @@ html_nav($user);
         <?php if (empty($profiles)): ?>
             <p class="muted">No profiles yet. Generate one above to connect to the VPN.</p>
         <?php else: ?>
-            <table>
+            <div class="table-wrap"><table>
                 <thead>
                     <tr><th>Name</th><th>Created</th><th>Status</th><th>Actions</th></tr>
                 </thead>
@@ -74,7 +74,7 @@ html_nav($user);
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
-            </table>
+            </table></div>
         <?php endif; ?>
     </div>
 </main>
