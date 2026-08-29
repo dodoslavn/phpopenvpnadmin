@@ -24,10 +24,12 @@ chown root:www-data /var/lib/vpnadmin/pki
 chmod 750 /var/lib/vpnadmin/pki
 log "Set /var/lib/vpnadmin/pki (750 root:www-data)"
 
-# DB dir: 770 so www-data group (incl. nobody for OpenVPN auth script) can create WAL files
-chown www-data:www-data /var/lib/vpnadmin/db
-chmod 770 /var/lib/vpnadmin/db
-log "Set /var/lib/vpnadmin/db (770 www-data:www-data)"
+# DB dir: owned by nobody so OpenVPN auth script (runs as nobody with no supplementary groups)
+# can access it directly. setgid ensures new files (WAL, SHM) inherit www-data group so
+# the web app (www-data) can also read/write them. 2770 = setgid + 770.
+chown nobody:www-data /var/lib/vpnadmin/db
+chmod 2770 /var/lib/vpnadmin/db
+log "Set /var/lib/vpnadmin/db (2770 nobody:www-data)"
 
 # Clients dir: www-data can create subdirs (for cert generation) and list (for glob)
 chown root:www-data /var/lib/vpnadmin/clients

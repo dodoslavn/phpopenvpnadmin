@@ -21,14 +21,16 @@ www-data ALL=(root) NOPASSWD: /bin/systemctl status openvpn-server@server
 www-data ALL=(root) NOPASSWD: /usr/bin/openssl genrsa -out /var/lib/vpnadmin/pki/* *
 www-data ALL=(root) NOPASSWD: /usr/bin/openssl req -x509 *
 www-data ALL=(root) NOPASSWD: /usr/bin/openssl req -new -key /var/lib/vpnadmin/pki/* -out /var/lib/vpnadmin/pki/* *
-www-data ALL=(root) NOPASSWD: /usr/bin/openssl x509 -req -in /var/lib/vpnadmin/pki/* *
 www-data ALL=(root) NOPASSWD: /usr/bin/openssl dhparam *
 www-data ALL=(root) NOPASSWD: /usr/sbin/openvpn --genkey secret /var/lib/vpnadmin/pki/ta.key
+
+# Cert signing with extensions (server and client)
+www-data ALL=(root) NOPASSWD: /usr/local/bin/vpnadmin-sign-cert server /var/lib/vpnadmin/pki/* /var/lib/vpnadmin/pki/*
+www-data ALL=(root) NOPASSWD: /usr/local/bin/vpnadmin-sign-cert client /var/lib/vpnadmin/clients/* /var/lib/vpnadmin/clients/* *
 
 # Client certificate generation
 www-data ALL=(root) NOPASSWD: /usr/bin/openssl genrsa -out /var/lib/vpnadmin/clients/* *
 www-data ALL=(root) NOPASSWD: /usr/bin/openssl req -new -key /var/lib/vpnadmin/clients/* -out /var/lib/vpnadmin/clients/* *
-www-data ALL=(root) NOPASSWD: /usr/bin/openssl x509 -req -in /var/lib/vpnadmin/clients/* *
 
 # CRL operations
 www-data ALL=(root) NOPASSWD: /usr/bin/openssl ca *

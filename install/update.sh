@@ -23,8 +23,13 @@ find /var/www/vpnadmin -type d -exec chmod 750 {} \;
 find /var/www/vpnadmin -type f -exec chmod 640 {} \;
 
 # Auth script
-cp "${REPO}/auth/check-password.sh" /usr/local/bin/vpn-check-password.sh
-chown root:root /usr/local/bin/vpn-check-password.sh
-chmod 755 /usr/local/bin/vpn-check-password.sh
+cp "${REPO}/auth/check-password.sh" /etc/openvpn/server/check-password.sh
+chown root:root /etc/openvpn/server/check-password.sh
+chmod 755 /etc/openvpn/server/check-password.sh
+
+# Cert signing helper
+cp "${REPO}/auth/sign-cert.sh" /usr/local/bin/vpnadmin-sign-cert
+chown root:root /usr/local/bin/vpnadmin-sign-cert
+chmod 755 /usr/local/bin/vpnadmin-sign-cert
 
 echo "Done. Reload Apache: systemctl reload apache2"

@@ -61,16 +61,11 @@ function pki_generate_server_cert(string $serverIp): bool {
     ]);
     if ($r['code'] !== 0) return false;
 
-    // Sign with CA
+    // Sign with CA — wrapper adds keyUsage/extendedKeyUsage extensions
     $r = run_privileged([
-        '/usr/bin/openssl', 'x509', '-req',
-        '-in', "{$pki}/server.csr",
-        '-CA', "{$pki}/ca.crt",
-        '-CAkey', "{$pki}/ca.key",
-        '-CAcreateserial',
-        '-out', "{$pki}/server.crt",
-        '-days', '3650',
-        '-sha256'
+        '/usr/local/bin/vpnadmin-sign-cert', 'server',
+        "{$pki}/server.csr",
+        "{$pki}/server.crt",
     ]);
     if ($r['code'] !== 0) return false;
 
@@ -139,17 +134,13 @@ function generate_client_cert(string $name, int $userId): ?array {
     ]);
     if ($r['code'] !== 0) return null;
 
-    // Sign
+    // Sign — wrapper adds keyUsage/extendedKeyUsage extensions
     $serial = strtoupper(bin2hex(random_bytes(8)));
     $r = run_privileged([
-        '/usr/bin/openssl', 'x509', '-req',
-        '-in', "{$dir}/client.csr",
-        '-CA', "{$pki}/ca.crt",
-        '-CAkey', "{$pki}/ca.key",
-        '-set_serial', '0x' . $serial,
-        '-out', "{$dir}/client.crt",
-        '-days', '3650',
-        '-sha256'
+        '/usr/local/bin/vpnadmin-sign-cert', 'client',
+        "{$dir}/client.csr",
+        "{$dir}/client.crt",
+        $serial,
     ]);
     if ($r['code'] !== 0) return null;
 
@@ -176,19 +167,22 @@ function build_ovpn(string $name, int $userId, string $serverIp, int $port = 119
 
     if (!$ca || !$cert || !$key || !$taKey) return null;
 
-    $serverIp = filter_var($serverIp, FILTER_VALIDATE_IP) ?: 'INVALID';
-    $port     = max(1, min(65535, $port));
+    // Accept IP or hostname; sanitize to safe characters only
+    $serverHost = preg_replace('/[^a-zA-Z0-9.\-]/', '', $serverIp);
+    if ($serverHost === '') $serverHost = 'INVALID';
+    $port = max(1, min(65535, $port));
 
     return <<<OVPN
 client
 dev tun
 proto udp
-remote {$serverIp} {$port}
+remote {$serverHost} {$port}
 resolv-retry infinite
 nobind
 persist-key
 persist-tun
 auth-user-pass
+remote-cert-tls server
 auth SHA256
 cipher AES-256-GCM
 tls-version-min 1.2
@@ -304,9 +298,9 @@ status      /var/log/vpnadmin/openvpn-status.log
 log-append  /var/log/vpnadmin/openvpn.log
 verb 3
 
-auth-user-pass-verify /usr/local/bin/vpn-check-password.sh via-env
+auth-user-pass-verify /etc/openvpn/server/check-password.sh via-env
 username-as-common-name
-script-security 2
+script-security 3
 
 crl-verify /var/lib/vpnadmin/pki/crl.pem
 CONF;

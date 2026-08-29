@@ -18,7 +18,7 @@ SCHEMA="$(dirname "$0")/../schema.sql"
 php -r "\$db = new PDO('sqlite:${DB}'); \$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); \$db->exec(file_get_contents('${SCHEMA}')); echo 'Schema created' . PHP_EOL;" \
     || error "Failed to create database schema"
 
-chown www-data:www-data "$DB"
+chown nobody:www-data "$DB"
 chmod 660 "$DB"
 log "Database created at ${DB}"
 

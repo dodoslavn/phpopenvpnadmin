@@ -13,8 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $serverIp = trim($_POST['server_ip'] ?? '');
     $vpnPort  = (int) ($_POST['vpn_port'] ?? 1194);
 
-    if (!filter_var($serverIp, FILTER_VALIDATE_IP)) {
-        $message = 'Invalid IP address.';
+    if (!filter_var($serverIp, FILTER_VALIDATE_IP) && !preg_match('/^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$/', $serverIp)) {
+        $message = 'Invalid IP address or hostname.';
         $msgType = 'error';
     } elseif ($vpnPort < 1 || $vpnPort > 65535) {
         $message = 'Invalid port.';
