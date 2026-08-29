@@ -12,7 +12,12 @@ DST="/usr/local/bin/vpn-check-password.sh"
 
 cp "$SRC" "$DST" || error "Failed to copy auth script"
 chown root:root "$DST"
-chmod 750 "$DST"
+chmod 755 "$DST"  # must be executable by nobody (OpenVPN drops privs before calling it)
 log "Installed ${DST}"
+
+# OpenVPN runs auth script as nobody — give nobody read access to the SQLite DB
+# by adding nobody to the www-data group
+usermod -aG www-data nobody
+log "Added nobody to www-data group (needed to read SQLite DB)"
 
 complete_step
