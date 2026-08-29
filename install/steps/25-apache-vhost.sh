@@ -54,8 +54,17 @@ EOF
 a2ensite vpnadmin.conf >/dev/null 2>&1 || error "Failed to enable vpnadmin site"
 log "Apache vhost enabled"
 
-# Create SSL dir (certs installed separately by user)
+# Generate self-signed cert if not already present — user can replace later
 mkdir -p /etc/vpnadmin/ssl
-log "Created /etc/vpnadmin/ssl — place your server.crt and server.key here"
+if [ ! -f /etc/vpnadmin/ssl/server.crt ]; then
+    openssl req -x509 -nodes -newkey rsa:2048 -days 3650 \
+        -keyout /etc/vpnadmin/ssl/server.key \
+        -out    /etc/vpnadmin/ssl/server.crt \
+        -subj   "/CN=$(hostname)/O=vpnadmin/C=EU" \
+        >/dev/null 2>&1 || error "Failed to generate self-signed SSL cert"
+    chmod 600 /etc/vpnadmin/ssl/server.key
+    chmod 644 /etc/vpnadmin/ssl/server.crt
+    log "Generated self-signed SSL cert — replace with your own in /etc/vpnadmin/ssl/"
+fi
 
 complete_step
