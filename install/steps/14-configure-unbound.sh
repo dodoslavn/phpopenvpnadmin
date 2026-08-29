@@ -28,9 +28,6 @@ server:
     harden-dnssec-stripped: yes
     use-caps-for-id: yes
 
-    # DNSSEC
-    auto-trust-anchor-file: "/var/lib/unbound/root.key"
-
     # Cache
     cache-min-ttl: 300
     cache-max-ttl: 86400

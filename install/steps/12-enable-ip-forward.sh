@@ -4,15 +4,13 @@ skip_if_done
 
 info "Enabling IPv4 forwarding..."
 
-# Set persistently in sysctl.conf
-if ! grep -q "^net.ipv4.ip_forward=1" /etc/sysctl.conf; then
-    # Remove any existing ip_forward lines then add the correct one
-    sed -i '/net\.ipv4\.ip_forward/d' /etc/sysctl.conf
-    echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
-    log "Added net.ipv4.ip_forward=1 to /etc/sysctl.conf"
-else
-    log "net.ipv4.ip_forward=1 already in /etc/sysctl.conf"
-fi
+# Write to /etc/sysctl.d/ — this is what systemd-sysctl reads reliably at boot on Debian 13.
+# Also touch sysctl.conf for compatibility, but sysctl.d/ is the authoritative source.
+echo "net.ipv4.ip_forward=1" > /etc/sysctl.d/99-vpnadmin-ipforward.conf
+log "Written /etc/sysctl.d/99-vpnadmin-ipforward.conf"
+
+# Also ensure sysctl.conf doesn't have a conflicting 0 setting
+sed -i 's/^#*net\.ipv4\.ip_forward\s*=.*/net.ipv4.ip_forward=1/' /etc/sysctl.conf 2>/dev/null || true
 
 # Apply immediately
 sysctl -w net.ipv4.ip_forward=1 >/dev/null || error "Failed to apply ip_forward"
