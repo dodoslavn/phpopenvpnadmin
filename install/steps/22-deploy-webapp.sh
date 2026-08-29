@@ -13,11 +13,12 @@ ASSETS_SRC="${REPO_ROOT}/assets"
 
 mkdir -p "$WEB_DST"
 
-rsync -a --delete "${WEB_SRC}/" "${WEB_DST}/" || error "Failed to deploy web files"
+cp -a "${WEB_SRC}/." "${WEB_DST}/" || error "Failed to deploy web files"
 log "Deployed web/ → ${WEB_DST}"
 
 if [ -d "$ASSETS_SRC" ]; then
-    rsync -a "${ASSETS_SRC}/" "${WEB_DST}/assets/" || error "Failed to deploy assets"
+    mkdir -p "${WEB_DST}/assets"
+    cp -a "${ASSETS_SRC}/." "${WEB_DST}/assets/" || error "Failed to deploy assets"
     log "Deployed assets/"
 fi
 
