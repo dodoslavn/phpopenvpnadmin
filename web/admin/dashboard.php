@@ -122,12 +122,21 @@ html_nav($user);
     </div>
 
     <div class="section">
-        <h3>Service Control</h3>
-        <form method="post" class="inline-form">
-            <button name="action" value="start">Start</button>
-            <button name="action" value="stop" class="btn-danger">Stop</button>
-            <button name="action" value="restart" class="btn-warning">Restart</button>
-        </form>
+        <h3>OpenVPN Control</h3>
+        <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+            <?php $ovpnRunning = ($services['OpenVPN'] === 'active'); ?>
+            <span>Status: <?= $ovpnRunning
+                ? '<span class="badge badge-ok">Running</span>'
+                : '<span class="badge badge-off">Stopped</span>' ?></span>
+            <form method="post" class="inline-form">
+                <?php if (!$ovpnRunning): ?>
+                    <button name="action" value="start">Start</button>
+                <?php else: ?>
+                    <button name="action" value="stop" class="btn-danger">Stop</button>
+                    <button name="action" value="restart" class="btn-warning">Restart</button>
+                <?php endif; ?>
+            </form>
+        </div>
     </div>
 </main>
 <?php html_foot(); ?>
