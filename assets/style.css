@@ -152,6 +152,7 @@ button:hover, .btn:hover { background: var(--primary-hover); }
 .wizard-box { max-width: 520px; }
 .login-box h1, .wizard-box h1 { font-size: 18px; }
 .login-box img, .wizard-box img { align-self: center; }
+.login-box form button, .wizard-box form button { width: 100%; justify-content: center; }
 
 /* ── Progress log (wizard) ───────────────────────── */
 .progress-log { list-style: none; font-family: monospace; font-size: 13px; background: #1e293b; color: #94a3b8; padding: 1rem; border-radius: var(--radius); max-height: 240px; overflow-y: auto; }
