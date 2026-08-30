@@ -122,6 +122,17 @@ html_nav($user);
     </div>
 
     <div class="section">
+        <h3>System Information</h3>
+        <div class="table-wrap"><table>
+            <tbody>
+                <?php foreach (system_info() as $label => $value): ?>
+                <tr><td style="width:40%;color:var(--muted)"><?= h($label) ?></td><td><?= h($value) ?></td></tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table></div>
+    </div>
+
+    <div class="section">
         <h3>OpenVPN Control</h3>
         <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
             <?php $ovpnRunning = ($services['OpenVPN'] === 'active'); ?>

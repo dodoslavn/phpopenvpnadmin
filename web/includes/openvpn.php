@@ -333,3 +333,35 @@ function openvpn_service_action(string $action): bool {
     $r = run_privileged(['/bin/systemctl', $action, 'openvpn-server@server']);
     return $r['code'] === 0;
 }
+
+function system_info(): array {
+    $read = fn(string $cmd) => trim((string) shell_exec($cmd . ' 2>/dev/null')) ?: '—';
+
+    // OS name from /etc/os-release
+    $osRelease = @parse_ini_file('/etc/os-release') ?: [];
+    $os = $osRelease['PRETTY_NAME'] ?? $read('uname -s');
+
+    // OpenVPN version — first line, strip "OpenVPN " prefix
+    $ovpnRaw = $read('openvpn --version');
+    preg_match('/OpenVPN (\S+)/', $ovpnRaw, $m);
+    $ovpn = $m[1] ?? $ovpnRaw;
+
+    // Apache version
+    $apacheRaw = $read('apache2 -v');
+    preg_match('#Apache/(\S+)#', $apacheRaw, $m);
+    $apache = $m[1] ?? $apacheRaw;
+
+    // Uptime human-readable
+    $uptimeRaw = $read('uptime -p');
+    $uptime = str_replace('up ', '', $uptimeRaw);
+
+    return [
+        'App version' => APP_VERSION,
+        'OS'          => $os,
+        'Kernel'      => $read('uname -r'),
+        'Uptime'      => $uptime,
+        'OpenVPN'     => $ovpn,
+        'Apache'      => $apache,
+        'PHP'         => PHP_VERSION,
+    ];
+}
