@@ -239,23 +239,41 @@ function openvpn_status(): array {
     $r = run_privileged(['/usr/bin/cat', OVPN_STATUS]);
     if ($r['code'] !== 0) return [];
 
-    $clients = [];
+    $clients  = [];
+    $newFmt   = false; // OpenVPN 2.6+ CSV format (lines prefixed with CLIENT_LIST,)
     $inClients = false;
 
     foreach (explode("\n", $r['output']) as $line) {
-        if (str_starts_with($line, 'Common Name')) { $inClients = true; continue; }
-        if (str_starts_with($line, 'ROUTING'))     { $inClients = false; continue; }
-        if (!$inClients || trim($line) === '')      continue;
+        // OpenVPN 2.6+: detect format from TITLE line
+        if (str_starts_with($line, 'TITLE,'))             { $newFmt = true; continue; }
 
-        $parts = explode(',', $line);
-        if (count($parts) >= 4) {
+        if ($newFmt) {
+            if (!str_starts_with($line, 'CLIENT_LIST,'))  continue;
+            $parts = explode(',', $line);
+            // CLIENT_LIST,cn,real_addr,virtual_addr,virtual_addr6,bytes_rx,bytes_tx,connected_since,...
+            if (count($parts) < 8) continue;
             $clients[] = [
-                'name'        => $parts[0],
-                'remote_ip'   => $parts[1],
-                'bytes_rx'    => $parts[2],
-                'bytes_tx'    => $parts[3],
-                'connected'   => $parts[4] ?? '',
+                'name'      => $parts[1],
+                'remote_ip' => $parts[2],
+                'bytes_rx'  => $parts[5],
+                'bytes_tx'  => $parts[6],
+                'connected' => $parts[7],
             ];
+        } else {
+            // Legacy format
+            if (str_starts_with($line, 'Common Name')) { $inClients = true; continue; }
+            if (str_starts_with($line, 'ROUTING'))     { $inClients = false; continue; }
+            if (!$inClients || trim($line) === '')      continue;
+            $parts = explode(',', $line);
+            if (count($parts) >= 4) {
+                $clients[] = [
+                    'name'      => $parts[0],
+                    'remote_ip' => $parts[1],
+                    'bytes_rx'  => $parts[2],
+                    'bytes_tx'  => $parts[3],
+                    'connected' => $parts[4] ?? '',
+                ];
+            }
         }
     }
 
