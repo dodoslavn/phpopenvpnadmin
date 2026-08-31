@@ -40,7 +40,7 @@ Run the installation script (can be safely re-run):
 > ./install/install.sh
 
 ## Using your own HTTPS certificate
-Once the installation script has finished, you can replace the self-signed SSL certificate and private key with a CA-signed one by placing your files in:
+Once the installation script has finished, you can replace the self-signed SSL certificate and private key with a CA-signed one by replacing your files in:
 > /etc/vpnadmin/ssl/
 
 ## OpenVPN client
