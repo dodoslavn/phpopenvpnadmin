@@ -1,51 +1,52 @@
 # PHP OpenVPN Admin
-A website written in PHP, to manage a self-hosted OpenVPN server. It is intended to be used on full VM, and this VM will be only to serve as a VPN server. Cheap rented VM suits the best. This tool is written in a way to use minimum memory as possible, thats why it was writen in PHP without FPM, and uses SQLite. This solution doesnt use any Docker.  
+A web interface written in PHP for managing a self-hosted OpenVPN server. It is intended to run on a dedicated VM whose sole purpose is to serve as a VPN server — a cheap rented VM works perfectly. The tool is designed to use as little memory as possible, which is why it is written in plain PHP without FPM and uses SQLite instead of a full database server. No Docker required.
 
 > **This project is completely vibe-coded** — written by an AI coding agent
 > from natural-language instructions, with human review and testing but no
 > hand-written code. Read it before you trust it with a production host.
 
-## Contains
+## Contents
 This Git repository contains:
-- installation script to install and configure all required packages to make your own OpenVPN server
-- website to manage acess to OpenVPN server  
+- an installation script that installs and configures all required packages to set up your own OpenVPN server
+- a web interface for managing access to the OpenVPN server
 
 ## Requirements
-- full VM with at least 512MB of RAM and 1vCPU
-- Debian ( might work on Ubuntu too )
-- root acces
+- a full VM with at least 512 MB of RAM and 1 vCPU
+- Debian (may also work on Ubuntu)
+- root access
 
-## What does it use
-- OpenVPN server - VPN server
-- Apache2 - HTTP server for the website
-- Unbound - DNS resolver
-- PHP - to render the website
-- SQLite - for database
-- IPTables - as a firewall ( it doesnt use NFTables )
-- OpenSSL - tool for certificates
+## What it uses
+- OpenVPN — VPN server
+- Apache2 — HTTP server for the web interface
+- Unbound — DNS resolver
+- PHP — server-side rendering
+- SQLite — database
+- iptables — firewall (does not use nftables)
+- OpenSSL — certificate management
 
 ## How to install
-Switch to root OS account:
+Switch to the root account:
 > su - root
 
-Move to some folder where you will keep the application permanently e.g.:  
+Move to a folder where you will keep the application permanently, e.g.:
 > mkdir -p /opt/git/
 > cd /opt/git/
 
-Clone the Git repo:  
-> git clone https://github.com/dodoslavn/phpopenvpnadmin  
+Clone the repository:
+> git clone https://github.com/dodoslavn/phpopenvpnadmin
 > cd phpopenvpnadmin
 
-Run installation script (can be repeated):  
+Run the installation script (can be safely re-run):
 > ./install/install.sh
 
-## Your own HTTPS certificate
-Once installation script finished, you can update the SSL certificate and the private key to signed one by CA, in folder:  
+## Using your own HTTPS certificate
+Once the installation script has finished, you can replace the self-signed SSL certificate and private key with a CA-signed one by placing your files in:
 > /etc/vpnadmin/ssl/
 
 ## OpenVPN client
-Once you generate your OpenVPN profile file ( .ovpn ), you have to download it and import it to your OpenVPN client application on your phone/PC.  
-The OpenVPN server is configured in a way, users are authenticated via client certificate, but also with username and password ( it is the same username and password as login to the website ). It is not possible to require username and password only for some profiles because of OpenVPN server configuration limitation.
+Once you generate an OpenVPN profile (.ovpn file), download it and import it into your OpenVPN client application on your phone or PC.
+
+The server is configured to authenticate users with both a client certificate and a username/password — the same credentials used to log in to the web interface. It is not possible to require username and password only for specific profiles due to an OpenVPN server configuration limitation.
 
 ## Recommendation
-It is recommended to use automatic OS updates for the VPN server, preferably via unattended-upgrades. All installed packages are from standard Debian repository.
+It is recommended to enable automatic OS updates on the VPN server, preferably via unattended-upgrades. All installed packages come from the standard Debian repository.
