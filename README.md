@@ -43,5 +43,8 @@ Once installation script finished, you can update the SSL certificate and the pr
 > /etc/vpnadmin/ssl/
 
 ## OpenVPN client
-Once you generate your OpenVPN profile file ( .ovpn ), you have to download it and import it to your OpenVPN client application on your phone/PC.
+Once you generate your OpenVPN profile file ( .ovpn ), you have to download it and import it to your OpenVPN client application on your phone/PC.  
 The OpenVPN server is configured in a way, users are authenticated via client certificate, but also with username and password ( it is the same username and password as login to the website ). It is not possible to require username and password only for some profiles because of OpenVPN server configuration limitation.
+
+## Recommendation
+It is recommended to use automatic OS updates for the VPN server, preferably via unattended-upgrades. All installed packages are from standard Debian repository.
