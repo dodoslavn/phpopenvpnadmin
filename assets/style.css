@@ -123,6 +123,7 @@ nav ul li a.active { color: var(--primary); border-bottom-color: var(--primary);
 
 /* ── Main content ────────────────────────────────── */
 main {
+    width: 100%;
     max-width: 960px;
     margin: 2rem auto;
     padding: 0 1.5rem;

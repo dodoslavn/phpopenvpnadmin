@@ -61,8 +61,9 @@ function html_foot(): void {
     echo '<footer>';
     echo '<div class="footer-inner">';
     echo '<span class="footer-brand">'
-       . '<a href="https://github.com/dodoslavn/phpopenvpnadmin" class="footer-repo" target="_blank" rel="noopener">' . htmlspecialchars($appName) . '</a>'
-       . ' <span class="footer-version">v' . htmlspecialchars($version) . '</span></span>';
+       . htmlspecialchars($appName) . ' <span class="footer-version">v' . htmlspecialchars($version) . '</span>'
+       . ' · <a href="https://github.com/dodoslavn/phpopenvpnadmin" class="footer-repo" target="_blank" rel="noopener">GitHub: dodoslavn/phpopenvpnadmin</a>'
+       . '</span>';
 
     if (count($langs) > 1) {
         echo '<div class="footer-langs">';
