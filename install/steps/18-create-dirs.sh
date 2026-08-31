@@ -19,10 +19,12 @@ for dir in "${dirs[@]}"; do
     log "Created: ${dir}"
 done
 
-# PKI: root owns, www-data can traverse (needed to read ca.crt, ta.key with 640 perms)
+# PKI: root owns, www-data group for web app access.
+# 711 (not 750) so OpenVPN's nobody user can also traverse the dir to stat crl.pem —
+# without this, OpenVPN loads the CRL at startup but can't reload it after revocation.
 chown root:www-data /var/lib/vpnadmin/pki
-chmod 750 /var/lib/vpnadmin/pki
-log "Set /var/lib/vpnadmin/pki (750 root:www-data)"
+chmod 711 /var/lib/vpnadmin/pki
+log "Set /var/lib/vpnadmin/pki (711 root:www-data)"
 
 # DB dir: owned by nobody so OpenVPN auth script (runs as nobody with no supplementary groups)
 # can access it directly. setgid ensures new files (WAL, SHM) inherit www-data group so
