@@ -90,6 +90,17 @@ function flash(string $msg, string $type = 'info'): void {
     echo '<div class="flash flash-' . htmlspecialchars($type) . '">' . htmlspecialchars($msg) . '</div>';
 }
 
+function fmt_bytes(int|string $bytes): string {
+    $b = (float) $bytes;
+    foreach (['B', 'KB', 'MB', 'GB', 'TB'] as $unit) {
+        if ($b < 1024 || $unit === 'TB') {
+            return round($b, $unit === 'B' ? 0 : 2) . ' ' . $unit;
+        }
+        $b /= 1024;
+    }
+    return $bytes . ' B';
+}
+
 function h(string $s): string {
     return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 }
