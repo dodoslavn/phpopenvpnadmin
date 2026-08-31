@@ -49,9 +49,6 @@ html_head(t('login.title'));
             </label>
             <button type="submit"><?= t('login.submit') ?></button>
         </form>
-        <?php if (count(lang_list()) > 1): ?>
-            <div class="lang-box"><?= _lang_switcher_html() ?></div>
-        <?php endif; ?>
     </div>
 </div>
 <?php html_foot(); ?>

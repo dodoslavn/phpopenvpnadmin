@@ -21,7 +21,6 @@ function html_nav(array $user): void {
     $role     = $user['role'];
     $isAdmin  = $role === 'admin';
     $path     = strtok($_SERVER['REQUEST_URI'], '?');
-    $langHtml = _lang_switcher_html();
     $logout   = t('nav.logout');
 
     $link = function(string $href, string $label) use ($path): string {
@@ -44,30 +43,40 @@ function html_nav(array $user): void {
     echo '<details class="user-menu nav-links">';
     echo   '<summary>' . $username . ' <span class="badge">' . $role . '</span></summary>';
     echo   '<div class="user-menu-panel">';
-    if ($langHtml) echo '<div class="user-menu-lang">' . $langHtml . '</div>';
     echo     '<a href="/logout.php" class="user-menu-logout">' . $logout . '</a>';
     echo   '</div>';
     echo '</details>';
     echo '</nav>';
 }
 
-function _lang_switcher_html(): string {
+function html_foot(): void {
     $langs   = lang_list();
     $current = $GLOBALS['_LANG_CODE'];
-    if (count($langs) <= 1) return '';
+    $base    = strtok($_SERVER['REQUEST_URI'], '?') ?: '/';
+    $version = APP_VERSION;
+    $appName = APP_NAME;
 
-    $base = strtok($_SERVER['REQUEST_URI'], '?') ?: '/';
-    $out  = '<select class="lang-select" onchange="location.href=this.value" aria-label="Language">';
-    foreach ($langs as $code => $name) {
-        $url      = htmlspecialchars($base . '?lang=' . urlencode($code));
-        $selected = $code === $current ? ' selected' : '';
-        $out .= '<option value="' . $url . '"' . $selected . '>' . htmlspecialchars($name) . '</option>';
+    echo '<footer>';
+    echo '<div class="footer-inner">';
+    echo '<span class="footer-brand">' . htmlspecialchars($appName) . ' <span class="footer-version">v' . htmlspecialchars($version) . '</span></span>';
+
+    if (count($langs) > 1) {
+        echo '<div class="footer-langs">';
+        $items = [];
+        foreach ($langs as $code => $name) {
+            if ($code === $current) {
+                $items[] = '<span class="footer-lang-active">' . htmlspecialchars($name) . '</span>';
+            } else {
+                $url = htmlspecialchars($base . '?lang=' . urlencode($code));
+                $items[] = '<a href="' . $url . '">' . htmlspecialchars($name) . '</a>';
+            }
+        }
+        echo implode(' · ', $items);
+        echo '</div>';
     }
-    $out .= '</select>';
-    return $out;
-}
 
-function html_foot(): void {
+    echo '</div>';
+    echo '</footer>';
     echo '</body></html>';
 }
 
