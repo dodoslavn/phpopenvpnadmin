@@ -30,7 +30,8 @@ function html_nav(array $user): void {
         <li><a href="/user/dashboard.php">My Profiles</a></li>
 HTML;
     if ($isAdmin) {
-        echo '<li><a href="/admin/dashboard.php">Server Status</a></li>';
+        echo '<li><a href="/admin/dashboard.php">Dashboard</a></li>';
+        echo '<li><a href="/admin/server.php">Server</a></li>';
         echo '<li><a href="/admin/users.php">Users</a></li>';
         echo '<li><a href="/admin/settings.php">Settings</a></li>';
     }
