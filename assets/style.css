@@ -219,7 +219,7 @@ footer {
 .footer-brand { font-size: 13px; color: var(--muted); }
 .footer-repo { color: var(--muted); text-decoration: none; }
 .footer-repo:hover { color: var(--primary); }
-.footer-version { font-size: 11px; color: var(--border); }
+.footer-version { font-size: 11px; color: var(--muted); }
 .footer-langs { display: flex; gap: .5rem; align-items: center; font-size: 13px; }
 .footer-langs a { color: var(--muted); text-decoration: none; }
 .footer-langs a:hover { color: var(--primary); }
