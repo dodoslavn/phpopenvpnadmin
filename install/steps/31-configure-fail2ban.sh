@@ -21,18 +21,21 @@ bantime  = 3600
 enabled  = true
 port     = 1194
 protocol = udp
-logpath  = /var/log/auth.log
 filter   = openvpn-auth
+backend  = systemd
 maxretry = 5
 findtime = 600
 bantime  = 3600
 EOF
 
-# Filter matching lines logged by check-password.sh via logger
+# Filter matching journal entries logged by check-password.sh via logger
 cat > /etc/fail2ban/filter.d/openvpn-auth.conf << 'EOF'
 [Definition]
-failregex = ^.* openvpn-auth: AUTH_FAILED user=\S+ src=<HOST>$
+failregex = AUTH_FAILED user=\S+ src=<HOST>$
 ignoreregex =
+
+[Init]
+journalmatch = SYSLOG_IDENTIFIER=openvpn-auth
 EOF
 
 systemctl enable fail2ban >/dev/null 2>&1
