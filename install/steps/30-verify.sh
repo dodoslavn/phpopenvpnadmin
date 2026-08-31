@@ -15,7 +15,7 @@ info2() { echo -e "  \033[0;34m[--]\033[0m $*"; }
 
 # Services
 echo "Services:"
-for svc in apache2 openvpn-server@server unbound; do
+for svc in apache2 openvpn-server@server unbound redis-server fail2ban; do
     if systemctl is-enabled "$svc" &>/dev/null; then
         status=$(systemctl is-active "$svc" 2>/dev/null)
         if [ "$status" = "active" ]; then
@@ -61,7 +61,7 @@ done
 
 echo ""
 echo "PHP modules:"
-for mod in sqlite3 pdo_sqlite; do
+for mod in sqlite3 pdo_sqlite redis; do
     php -m | grep -qi "$mod" && pass "php-${mod}" || fail "php-${mod} missing"
 done
 

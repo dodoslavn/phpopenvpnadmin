@@ -15,6 +15,7 @@ return [
     'login.submit'          => 'Bejelentkezés',
     'login.err.required'    => 'A felhasználónév és jelszó megadása kötelező.',
     'login.err.invalid'     => 'Érvénytelen felhasználónév vagy jelszó.',
+    'login.err.ratelimit'   => 'Túl sok sikertelen kísérlet. Kérjük, próbálja újra 15 perc múlva.',
 
     'profiles.title'        => 'VPN profiljaim',
     'profiles.generate'     => '+ Új profil létrehozása',

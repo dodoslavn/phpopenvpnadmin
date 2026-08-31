@@ -15,6 +15,7 @@ return [
     'login.submit'          => 'Zaloguj się',
     'login.err.required'    => 'Nazwa użytkownika i hasło są wymagane.',
     'login.err.invalid'     => 'Nieprawidłowa nazwa użytkownika lub hasło.',
+    'login.err.ratelimit'   => 'Zbyt wiele nieudanych prób. Spróbuj ponownie za 15 minut.',
 
     'profiles.title'        => 'Moje profile VPN',
     'profiles.generate'     => '+ Utwórz nowy profil',

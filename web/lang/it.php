@@ -15,6 +15,7 @@ return [
     'login.submit'          => 'Accedi',
     'login.err.required'    => 'Nome utente e password sono obbligatori.',
     'login.err.invalid'     => 'Nome utente o password non validi.',
+    'login.err.ratelimit'   => 'Troppi tentativi falliti. Riprova tra 15 minuti.',
 
     'profiles.title'        => 'I miei profili VPN',
     'profiles.generate'     => '+ Crea nuovo profilo',

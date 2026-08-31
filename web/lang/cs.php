@@ -15,6 +15,7 @@ return [
     'login.submit'          => 'Přihlásit se',
     'login.err.required'    => 'Uživatelské jméno a heslo jsou povinné.',
     'login.err.invalid'     => 'Neplatné uživatelské jméno nebo heslo.',
+    'login.err.ratelimit'   => 'Příliš mnoho neúspěšných pokusů. Zkuste to prosím za 15 minut.',
 
     'profiles.title'        => 'Moje VPN profily',
     'profiles.generate'     => '+ Vytvořit nový profil',

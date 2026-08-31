@@ -15,6 +15,7 @@ return [
     'login.submit'          => 'Iniciar sesión',
     'login.err.required'    => 'El usuario y la contraseña son obligatorios.',
     'login.err.invalid'     => 'Usuario o contraseña incorrectos.',
+    'login.err.ratelimit'   => 'Demasiados intentos fallidos. Por favor, inténtalo de nuevo en 15 minutos.',
 
     'profiles.title'        => 'Mis perfiles VPN',
     'profiles.generate'     => '+ Crear nuevo perfil',

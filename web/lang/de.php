@@ -17,6 +17,7 @@ return [
     'login.submit'          => 'Anmelden',
     'login.err.required'    => 'Benutzername und Passwort sind erforderlich.',
     'login.err.invalid'     => 'Ungültiger Benutzername oder Passwort.',
+    'login.err.ratelimit'   => 'Zu viele Fehlversuche. Bitte versuchen Sie es in 15 Minuten erneut.',
 
     // My Profiles
     'profiles.title'        => 'Meine VPN-Profile',

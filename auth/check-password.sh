@@ -35,5 +35,6 @@ result=$(VPN_USER="$username" VPN_PASS="$password" VPN_DB="$DB" php -r "
 if [ "$result" = "ok" ]; then
     exit 0
 else
+    logger -p auth.warn -t openvpn-auth "AUTH_FAILED user=${username} src=${untrusted_ip:-unknown}"
     exit 1
 fi
