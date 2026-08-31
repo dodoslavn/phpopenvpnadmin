@@ -54,6 +54,42 @@ EOF
 a2ensite vpnadmin.conf >/dev/null 2>&1 || error "Failed to enable vpnadmin site"
 log "Apache vhost enabled"
 
+# Write catch-all vhost (NOT enabled by default).
+# To enable: set ServerName in vpnadmin.conf to your real domain, then:
+#   sudo a2ensite 000-catchall && sudo systemctl reload apache2
+cat > /etc/apache2/sites-available/000-catchall.conf << 'CATCHALL'
+# Default catch-all vhost — rejects requests for unrecognised domains.
+#
+# HOW TO ENABLE:
+#   1. Set ServerName in /etc/apache2/sites-available/vpnadmin.conf
+#      to your actual domain or IP (e.g. ServerName vpn.example.com).
+#   2. sudo a2ensite 000-catchall
+#   3. sudo systemctl reload apache2
+#
+# This file is loaded first (000-) and catches anything that does not
+# match vpnadmin.conf's ServerName, returning 403.
+
+<VirtualHost *:80>
+    ServerName catchall
+    <Location />
+        Require all denied
+    </Location>
+    ErrorLog ${APACHE_LOG_DIR}/catchall-error.log
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName catchall
+    SSLEngine on
+    SSLCertificateFile    /etc/vpnadmin/ssl/server.crt
+    SSLCertificateKeyFile /etc/vpnadmin/ssl/server.key
+    <Location />
+        Require all denied
+    </Location>
+    ErrorLog ${APACHE_LOG_DIR}/catchall-ssl-error.log
+</VirtualHost>
+CATCHALL
+log "Catch-all vhost written to sites-available/000-catchall.conf (not enabled)"
+
 # Generate self-signed cert if not already present — user can replace later
 mkdir -p /etc/vpnadmin/ssl
 if [ ! -f /etc/vpnadmin/ssl/server.crt ]; then
