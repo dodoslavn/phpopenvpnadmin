@@ -48,16 +48,13 @@ function _lang_switcher_html(): string {
     if (count($langs) <= 1) return '';
 
     $base = strtok($_SERVER['REQUEST_URI'], '?') ?: '/';
-    $out  = '<span class="lang-switcher">';
+    $out  = '<select class="lang-select" onchange="location.href=this.value" aria-label="Language">';
     foreach ($langs as $code => $name) {
-        if ($code === $current) {
-            $out .= '<span class="lang-current">' . htmlspecialchars($name) . '</span>';
-        } else {
-            $url  = $base . '?lang=' . urlencode($code);
-            $out .= '<a href="' . htmlspecialchars($url) . '" class="lang-link">' . htmlspecialchars($name) . '</a>';
-        }
+        $url      = htmlspecialchars($base . '?lang=' . urlencode($code));
+        $selected = $code === $current ? ' selected' : '';
+        $out .= '<option value="' . $url . '"' . $selected . '>' . htmlspecialchars($name) . '</option>';
     }
-    $out .= '</span>';
+    $out .= '</select>';
     return $out;
 }
 

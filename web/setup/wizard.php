@@ -49,7 +49,6 @@ html_head(t('wizard.title'));
         <?php foreach ($errors as $e): ?>
             <?php flash($e, 'error'); ?>
         <?php endforeach; ?>
-        <?= _lang_switcher_html() ?>
         <form method="post">
             <fieldset>
                 <legend><?= t('wizard.admin') ?></legend>
@@ -78,6 +77,9 @@ html_head(t('wizard.title'));
             </fieldset>
             <button type="submit"><?= t('wizard.submit') ?></button>
         </form>
+        <?php if (count(lang_list()) > 1): ?>
+            <div class="lang-box"><?= _lang_switcher_html() ?></div>
+        <?php endif; ?>
 
 <?php elseif ($step === 'generating'): ?>
         <p><?= t('wizard.generating') ?></p>

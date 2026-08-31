@@ -39,7 +39,6 @@ html_head(t('login.title'));
         <?php if ($error): ?>
             <?php flash($error, 'error'); ?>
         <?php endif; ?>
-        <?= _lang_switcher_html() ?>
         <form method="post">
             <label><?= t('login.username') ?>
                 <input type="text" name="username" autocomplete="username" required
@@ -50,6 +49,9 @@ html_head(t('login.title'));
             </label>
             <button type="submit"><?= t('login.submit') ?></button>
         </form>
+        <?php if (count(lang_list()) > 1): ?>
+            <div class="lang-box"><?= _lang_switcher_html() ?></div>
+        <?php endif; ?>
     </div>
 </div>
 <?php html_foot(); ?>

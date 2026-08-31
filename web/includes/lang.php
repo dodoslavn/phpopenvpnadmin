@@ -52,7 +52,6 @@ function lang_list(): array {
     $langs = [];
     foreach (glob(__DIR__ . '/../lang/*.php') as $file) {
         $code = basename($file, '.php');
-        // Each lang file may optionally define 'lang.name' for its own name
         $strings = require $file;
         $langs[$code] = $strings['lang.name'] ?? strtoupper($code);
     }

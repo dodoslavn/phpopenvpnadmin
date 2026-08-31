@@ -129,11 +129,18 @@ button:hover, .btn:hover { background: var(--primary-hover); }
 .flash-error   { background: #fef2f2; color: #b91c1c; border-left: 4px solid #ef4444; }
 .flash-warning { background: #fffbeb; color: #92400e; border-left: 4px solid #f59e0b; }
 
-/* ── Language switcher ──��────────────────────────── */
-.lang-switcher { display: flex; align-items: center; gap: .4rem; font-size: 12px; margin-right: .5rem; }
-.lang-current  { color: var(--primary); font-weight: 600; }
-.lang-link     { color: var(--muted); text-decoration: none; }
-.lang-link:hover { color: var(--primary); }
+/* ── Language switcher ───────────────────────────── */
+.lang-select {
+    font-size: 12px;
+    padding: .2rem .4rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    width: auto;
+}
+.lang-box { text-align: center; padding-top: .25rem; border-top: 1px solid var(--border); }
 
 /* ── Login / Wizard ──────────────────────────────── */
 .login-wrap, .wizard-wrap {
