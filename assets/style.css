@@ -129,6 +129,12 @@ button:hover, .btn:hover { background: var(--primary-hover); }
 .flash-error   { background: #fef2f2; color: #b91c1c; border-left: 4px solid #ef4444; }
 .flash-warning { background: #fffbeb; color: #92400e; border-left: 4px solid #f59e0b; }
 
+/* ── Language switcher ──��────────────────────────── */
+.lang-switcher { display: flex; align-items: center; gap: .4rem; font-size: 12px; margin-right: .5rem; }
+.lang-current  { color: var(--primary); font-weight: 600; }
+.lang-link     { color: var(--muted); text-decoration: none; }
+.lang-link:hover { color: var(--primary); }
+
 /* ── Login / Wizard ──────────────────────────────── */
 .login-wrap, .wizard-wrap {
     min-height: 100vh;

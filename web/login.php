@@ -21,33 +21,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
     if ($username === '' || $password === '') {
-        $error = 'Username and password are required.';
+        $error = t('login.err.required');
     } elseif (!login($username, $password)) {
-        $error = 'Invalid username or password.';
+        $error = t('login.err.invalid');
     } else {
         header('Location: /');
         exit;
     }
 }
 
-html_head('Login');
+html_head(t('login.title'));
 ?>
 <div class="login-wrap">
     <div class="login-box">
         <img src="/assets/logo.svg" alt="logo" height="48">
-        <h1>Sign In</h1>
+        <h1><?= t('login.title') ?></h1>
         <?php if ($error): ?>
             <?php flash($error, 'error'); ?>
         <?php endif; ?>
+        <?= _lang_switcher_html() ?>
         <form method="post">
-            <label>Username
+            <label><?= t('login.username') ?>
                 <input type="text" name="username" autocomplete="username" required
                        value="<?= h($_POST['username'] ?? '') ?>">
             </label>
-            <label>Password
+            <label><?= t('login.password') ?>
                 <input type="password" name="password" autocomplete="current-password" required>
             </label>
-            <button type="submit">Sign In</button>
+            <button type="submit"><?= t('login.submit') ?></button>
         </form>
     </div>
 </div>

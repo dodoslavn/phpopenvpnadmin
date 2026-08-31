@@ -45,15 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['profile_name'] ?? '');
 
     if (!preg_match('/^[a-zA-Z0-9_\-]{2,32}$/', $name)) {
-        $errors[] = 'Profile name: 2–32 characters, letters/numbers/underscore/dash only.';
+        $errors[] = t('profile.err.name');
     }
 
-    // Check for duplicate name for this user
     if (empty($errors)) {
         $dup = db()->prepare('SELECT id FROM profiles WHERE user_id = ? AND name = ? AND revoked = 0');
         $dup->execute([$userId, $name]);
         if ($dup->fetch()) {
-            $errors[] = "You already have an active profile named '{$name}'.";
+            $errors[] = t('profile.err.duplicate', ['name' => $name]);
         }
     }
 
@@ -61,46 +60,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = generate_client_cert($name, $userId);
 
         if (!$result) {
-            $errors[] = 'Certificate generation failed. Please try again.';
+            $errors[] = t('profile.err.genfail');
         } else {
             db()->prepare(
                 'INSERT INTO profiles (user_id, name, cert_serial) VALUES (?, ?, ?)'
             )->execute([$userId, $name, $result['serial']]);
 
             $profileId = (int) db()->lastInsertId();
-            $message   = "Profile '{$name}' created. Download it below.";
+            $message   = t('profile.created.ok', ['name' => $name]);
             $msgType   = 'success';
 
-            // Redirect to download
             header("Location: /user/profile.php?download={$profileId}");
             exit;
         }
     }
 }
 
-html_head('Generate VPN Profile');
+html_head(t('profile.title'));
 html_nav($user);
 ?>
 <main>
-    <h2>Generate New VPN Profile</h2>
+    <h2><?= t('profile.title') ?></h2>
 
-    <p>Each profile is a <code>.ovpn</code> file for one device. Download it and import it into your OpenVPN client.</p>
-    <p>You will need to enter your password each time you connect.</p>
+    <p><?= t('profile.desc1') ?></p>
+    <p><?= t('profile.desc2') ?></p>
 
     <?php if ($message): flash($message, $msgType); endif; ?>
     <?php foreach ($errors as $e): flash($e, 'error'); endforeach; ?>
 
     <form method="post" class="form-grid">
-        <label>Profile Name
+        <label><?= t('profile.name.label') ?>
             <input type="text" name="profile_name" required
                    pattern="[a-zA-Z0-9_\-]{2,32}"
-                   placeholder="e.g. laptop, phone, work-pc"
+                   placeholder="<?= h(t('profile.name.placeholder')) ?>"
                    value="<?= h($_POST['profile_name'] ?? '') ?>">
-            <small>No spaces. Used as the filename.</small>
+            <small><?= t('profile.name.hint') ?></small>
         </label>
-        <button type="submit">Generate Profile</button>
+        <button type="submit"><?= t('profile.submit') ?></button>
     </form>
 
-    <p><a href="/user/dashboard.php">← Back to profiles</a></p>
+    <p><a href="/user/dashboard.php"><?= t('profile.back') ?></a></p>
 </main>
 <?php html_foot(); ?>

@@ -14,39 +14,45 @@ $totalProfiles = db()->query('SELECT COUNT(*) FROM profiles WHERE revoked = 0')-
 $serverIp   = setting('server_ip', 'not set');
 $vpnPort    = setting('vpn_port', '1194');
 
-html_head('Server Status');
+html_head(t('dashboard.title'));
 html_nav($user);
 ?>
 <main>
-    <h2>Server Status</h2>
+    <h2><?= t('dashboard.title') ?></h2>
 
     <div class="stat-row">
         <div class="stat">
             <span class="stat-value"><?= count($clients) ?></span>
-            <span class="stat-label">Connected Clients</span>
+            <span class="stat-label"><?= t('dashboard.connected') ?></span>
         </div>
         <div class="stat">
             <span class="stat-value"><?= h((string)$totalUsers) ?></span>
-            <span class="stat-label">Active Users</span>
+            <span class="stat-label"><?= t('dashboard.active_users') ?></span>
         </div>
         <div class="stat">
             <span class="stat-value"><?= h((string)$totalProfiles) ?></span>
-            <span class="stat-label">Active Profiles</span>
+            <span class="stat-label"><?= t('dashboard.active_profiles') ?></span>
         </div>
         <div class="stat">
             <span class="stat-value"><?= h($serverIp) ?>:<?= h($vpnPort) ?></span>
-            <span class="stat-label">VPN Endpoint</span>
+            <span class="stat-label"><?= t('dashboard.endpoint') ?></span>
         </div>
     </div>
 
     <div class="section">
-        <h3>Connected Clients</h3>
+        <h3><?= t('dashboard.connected') ?></h3>
         <?php if (empty($clients)): ?>
-            <p class="muted">No clients connected.</p>
+            <p class="muted"><?= t('dashboard.no_clients') ?></p>
         <?php else: ?>
             <div class="table-wrap"><table>
                 <thead>
-                    <tr><th>Name</th><th>Remote IP</th><th>Bytes RX</th><th>Bytes TX</th><th>Connected Since</th></tr>
+                    <tr>
+                        <th><?= t('dashboard.col.name') ?></th>
+                        <th><?= t('dashboard.col.remote_ip') ?></th>
+                        <th><?= t('dashboard.col.bytes_rx') ?></th>
+                        <th><?= t('dashboard.col.bytes_tx') ?></th>
+                        <th><?= t('dashboard.col.connected') ?></th>
+                    </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($clients as $c): ?>
@@ -62,6 +68,5 @@ html_nav($user);
             </table></div>
         <?php endif; ?>
     </div>
-
 </main>
 <?php html_foot(); ?>

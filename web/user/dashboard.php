@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'revok
         require_once __DIR__ . '/../includes/openvpn.php';
         revoke_client_cert($p['cert_serial']);
         db()->prepare('UPDATE profiles SET revoked = 1 WHERE id = ?')->execute([$profileId]);
-        $message = "Profile '{$p['name']}' revoked.";
+        $message = t('profiles.revoked.ok', ['name' => $p['name']]);
         $msgType = 'success';
     }
 }
@@ -30,25 +30,30 @@ $profiles = db()->prepare(
 $profiles->execute([$userId]);
 $profiles = $profiles->fetchAll();
 
-html_head('My VPN Profiles');
+html_head(t('profiles.title'));
 html_nav($user);
 ?>
 <main>
-    <h2>My VPN Profiles</h2>
+    <h2><?= t('profiles.title') ?></h2>
 
     <?php if ($message): flash($message, $msgType); endif; ?>
 
     <div class="section">
-        <a href="/user/profile.php" class="btn">+ Generate New Profile</a>
+        <a href="/user/profile.php" class="btn"><?= t('profiles.generate') ?></a>
     </div>
 
     <div class="section">
         <?php if (empty($profiles)): ?>
-            <p class="muted">No profiles yet. Generate one above to connect to the VPN.</p>
+            <p class="muted"><?= t('profiles.empty') ?></p>
         <?php else: ?>
             <div class="table-wrap"><table>
                 <thead>
-                    <tr><th>Name</th><th>Created</th><th>Status</th><th>Actions</th></tr>
+                    <tr>
+                        <th><?= t('profiles.col.name') ?></th>
+                        <th><?= t('profiles.col.created') ?></th>
+                        <th><?= t('profiles.col.status') ?></th>
+                        <th><?= t('profiles.col.actions') ?></th>
+                    </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($profiles as $p): ?>
@@ -57,17 +62,17 @@ html_nav($user);
                         <td><?= h($p['created_at']) ?></td>
                         <td>
                             <?= $p['revoked']
-                                ? '<span class="badge badge-off">Revoked</span>'
-                                : '<span class="badge badge-ok">Active</span>' ?>
+                                ? '<span class="badge badge-off">' . t('profiles.status.revoked') . '</span>'
+                                : '<span class="badge badge-ok">' . t('profiles.status.active') . '</span>' ?>
                         </td>
                         <td>
                             <?php if (!$p['revoked']): ?>
-                            <a href="/user/profile.php?download=<?= $p['id'] ?>" class="btn btn-sm">Download .ovpn</a>
+                            <a href="/user/profile.php?download=<?= $p['id'] ?>" class="btn btn-sm"><?= t('profiles.download') ?></a>
                             <form method="post" class="inline-form"
-                                  onsubmit="return confirm('Revoke this profile? It cannot be re-activated.')">
+                                  onsubmit="return confirm('<?= h(t('profiles.revoke.confirm')) ?>')">
                                 <input type="hidden" name="action" value="revoke">
                                 <input type="hidden" name="profile_id" value="<?= $p['id'] ?>">
-                                <button type="submit" class="btn-sm btn-danger">Revoke</button>
+                                <button type="submit" class="btn-sm btn-danger"><?= t('profiles.revoke') ?></button>
                             </form>
                             <?php endif; ?>
                         </td>

@@ -8,6 +8,8 @@ define('CLIENTS_DIR',  '/var/lib/vpnadmin/clients');
 define('OVPN_STATUS',  '/var/log/vpnadmin/openvpn-status.log');
 define('OVPN_CONF',    '/etc/openvpn/server/server.conf');
 
+require_once __DIR__ . '/lang.php';
+
 define('SESSION_LIFETIME', 8 * 3600); // 8 hours
 define('SESSION_COOKIE',   'vpnadmin_session');
 
