@@ -183,7 +183,7 @@ persist-key
 persist-tun
 auth-user-pass
 remote-cert-tls server
-verify-x509-name server name
+verify-x509-name vpn-server name
 auth SHA256
 cipher AES-256-GCM
 tls-version-min 1.2
