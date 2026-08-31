@@ -61,7 +61,7 @@ html_nav($user);
                         <td><?= h($c['remote_ip']) ?></td>
                         <td><?= fmt_bytes($c['bytes_rx']) ?></td>
                         <td><?= fmt_bytes($c['bytes_tx']) ?></td>
-                        <td><?= h($c['connected']) ?></td>
+                        <td><?= fmt_connected($c['connected_ts'], $c['connected']) ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

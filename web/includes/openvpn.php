@@ -251,14 +251,15 @@ function openvpn_status(): array {
         if ($newFmt) {
             if (!str_starts_with($line, 'CLIENT_LIST,'))  continue;
             $parts = explode(',', $line);
-            // CLIENT_LIST,cn,real_addr,virtual_addr,virtual_addr6,bytes_rx,bytes_tx,connected_since,...
+            // CLIENT_LIST,cn,real_addr,virtual_addr,virtual_addr6,bytes_rx,bytes_tx,connected_since,connected_since_t,...
             if (count($parts) < 8) continue;
             $clients[] = [
-                'name'      => $parts[1],
-                'remote_ip' => $parts[2],
-                'bytes_rx'  => $parts[5],
-                'bytes_tx'  => $parts[6],
-                'connected' => $parts[7],
+                'name'         => $parts[1],
+                'remote_ip'    => $parts[2],
+                'bytes_rx'     => $parts[5],
+                'bytes_tx'     => $parts[6],
+                'connected_ts' => isset($parts[8]) && is_numeric($parts[8]) ? (int)$parts[8] : null,
+                'connected'    => $parts[7],
             ];
         } else {
             // Legacy format
@@ -268,11 +269,12 @@ function openvpn_status(): array {
             $parts = explode(',', $line);
             if (count($parts) >= 4) {
                 $clients[] = [
-                    'name'      => $parts[0],
-                    'remote_ip' => $parts[1],
-                    'bytes_rx'  => $parts[2],
-                    'bytes_tx'  => $parts[3],
-                    'connected' => $parts[4] ?? '',
+                    'name'         => $parts[0],
+                    'remote_ip'    => $parts[1],
+                    'bytes_rx'     => $parts[2],
+                    'bytes_tx'     => $parts[3],
+                    'connected_ts' => null,
+                    'connected'    => $parts[4] ?? '',
                 ];
             }
         }

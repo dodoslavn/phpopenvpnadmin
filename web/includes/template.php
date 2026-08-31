@@ -90,6 +90,19 @@ function flash(string $msg, string $type = 'info'): void {
     echo '<div class="flash flash-' . htmlspecialchars($type) . '">' . htmlspecialchars($msg) . '</div>';
 }
 
+function fmt_connected(int|null $ts, string $fallback): string {
+    if ($ts !== null) {
+        return gmdate('d.m.Y H:i:s', $ts) . ' UTC';
+    }
+    // Legacy format: parse as server local time, convert to UTC
+    try {
+        $dt = new DateTimeImmutable($fallback, new DateTimeZone(date_default_timezone_get()));
+        return $dt->setTimezone(new DateTimeZone('UTC'))->format('d.m.Y H:i:s') . ' UTC';
+    } catch (Exception $e) {
+        return $fallback;
+    }
+}
+
 function fmt_bytes(int|string $bytes): string {
     $b = (float) $bytes;
     foreach (['B', 'KB', 'MB', 'GB', 'TB'] as $unit) {
