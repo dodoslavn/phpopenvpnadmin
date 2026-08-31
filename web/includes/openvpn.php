@@ -111,7 +111,7 @@ function pki_generate_crl(): bool {
 
 // ── Client certificate generation ────────────────────────────────────────
 
-function generate_client_cert(string $name, int $userId): ?array {
+function generate_client_cert(string $name, int $userId, string $username): ?array {
     $name  = safe_filename($name);
     $pki   = PKI_DIR;
     $dir   = CLIENTS_DIR . "/{$userId}_{$name}";
@@ -130,7 +130,7 @@ function generate_client_cert(string $name, int $userId): ?array {
         '/usr/bin/openssl', 'req', '-new',
         '-key', "{$dir}/client.key",
         '-out', "{$dir}/client.csr",
-        '-subj', "/CN={$name}/O=vpnadmin/C=EU"
+        '-subj', "/CN={$username}_{$name}/O=vpnadmin/C=EU"
     ]);
     if ($r['code'] !== 0) return null;
 
@@ -253,8 +253,11 @@ function openvpn_status(): array {
             $parts = explode(',', $line);
             // CLIENT_LIST,cn,real_addr,virtual_addr,virtual_addr6,bytes_rx,bytes_tx,connected_since,connected_since_t,...
             if (count($parts) < 8) continue;
+            $cn  = $parts[1];
+            $sep = strrpos($cn, '_');
             $clients[] = [
-                'name'         => $parts[1],
+                'name'         => $sep !== false ? substr($cn, 0, $sep) : $cn,
+                'profile'      => $sep !== false ? substr($cn, $sep + 1) : '',
                 'remote_ip'    => $parts[2],
                 'bytes_rx'     => $parts[5],
                 'bytes_tx'     => $parts[6],
@@ -270,6 +273,7 @@ function openvpn_status(): array {
             if (count($parts) >= 4) {
                 $clients[] = [
                     'name'         => $parts[0],
+                    'profile'      => '',
                     'remote_ip'    => $parts[1],
                     'bytes_rx'     => $parts[2],
                     'bytes_tx'     => $parts[3],

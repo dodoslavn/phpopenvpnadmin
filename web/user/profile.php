@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        $result = generate_client_cert($name, $userId);
+        $result = generate_client_cert($name, $userId, $user['username']);
 
         if (!$result) {
             $errors[] = t('profile.err.genfail');

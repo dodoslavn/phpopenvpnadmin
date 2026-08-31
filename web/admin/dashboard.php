@@ -48,6 +48,7 @@ html_nav($user);
                 <thead>
                     <tr>
                         <th><?= t('dashboard.col.name') ?></th>
+                        <th><?= t('dashboard.col.profile') ?></th>
                         <th><?= t('dashboard.col.remote_ip') ?></th>
                         <th><?= t('dashboard.col.bytes_rx') ?></th>
                         <th><?= t('dashboard.col.bytes_tx') ?></th>
@@ -58,6 +59,7 @@ html_nav($user);
                     <?php foreach ($clients as $c): ?>
                     <tr>
                         <td><?= h($c['name']) ?></td>
+                        <td><?= h($c['profile']) ?: '<span style="color:var(--muted)">—</span>' ?></td>
                         <td><?= h($c['remote_ip']) ?></td>
                         <td><?= fmt_bytes($c['bytes_rx']) ?></td>
                         <td><?= fmt_bytes($c['bytes_tx']) ?></td>
