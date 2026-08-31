@@ -51,6 +51,11 @@ www-data ALL=(root) NOPASSWD: /bin/cp /tmp/vpnadmin-server.conf /etc/openvpn/ser
 
 # Read OpenVPN status log
 www-data ALL=(root) NOPASSWD: /usr/bin/cat /var/log/vpnadmin/openvpn-status.log
+
+# fail2ban status (read-only, for dashboard display)
+www-data ALL=(root) NOPASSWD: /usr/bin/fail2ban-client status
+www-data ALL=(root) NOPASSWD: /usr/bin/fail2ban-client status sshd
+www-data ALL=(root) NOPASSWD: /usr/bin/fail2ban-client status openvpn-auth
 EOF
 
 chmod 440 "$SUDOERS_FILE"

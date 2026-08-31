@@ -353,6 +353,39 @@ function openvpn_service_action(string $action): bool {
     return $r['code'] === 0;
 }
 
+function redis_info(): array {
+    try {
+        $r = new Redis();
+        $r->connect('127.0.0.1', 6379, 0.5);
+        $info = $r->info();
+        return [
+            'version' => $info['redis_version'] ?? '?',
+            'memory'  => $info['used_memory_human'] ?? '?',
+            'keys'    => $r->dbSize(),
+        ];
+    } catch (Exception $e) {
+        return [];
+    }
+}
+
+function fail2ban_stats(): array {
+    $stats = [];
+    foreach (['sshd', 'openvpn-auth'] as $jail) {
+        $r = run_privileged(['/usr/bin/fail2ban-client', 'status', $jail]);
+        if ($r['code'] !== 0) {
+            $stats[$jail] = null;
+            continue;
+        }
+        preg_match('/Currently banned:\s*(\d+)/', $r['output'], $cur);
+        preg_match('/Total banned:\s*(\d+)/',     $r['output'], $tot);
+        $stats[$jail] = [
+            'current' => (int) ($cur[1] ?? 0),
+            'total'   => (int) ($tot[1] ?? 0),
+        ];
+    }
+    return $stats;
+}
+
 function system_info(): array {
     $read = fn(string $cmd) => trim((string) shell_exec($cmd . ' 2>/dev/null')) ?: '—';
 
@@ -370,6 +403,10 @@ function system_info(): array {
     preg_match('#Apache/(\S+)#', $apacheRaw, $m);
     $apache = $m[1] ?? $apacheRaw;
 
+    // Redis version
+    $redisInfo = redis_info();
+    $redis = $redisInfo['version'] ?? '—';
+
     // Uptime human-readable
     $uptimeRaw = $read('uptime -p');
     $uptime = str_replace('up ', '', $uptimeRaw);
@@ -382,5 +419,6 @@ function system_info(): array {
         'OpenVPN'     => $ovpn,
         'Apache'      => $apache,
         'PHP'         => PHP_VERSION,
+        'Redis'       => $redis,
     ];
 }

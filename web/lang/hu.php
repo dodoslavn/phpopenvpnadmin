@@ -72,6 +72,13 @@ return [
     'server.control.restart'   => 'Újraindítás',
     'server.sysinfo'           => 'Rendszerinformációk',
     'server.action.ok'         => 'Az OpenVPN sikeresen {action}.',
+
+    'server.security' => 'Biztonság',
+    'server.sec.jail' => 'Jail',
+    'server.sec.banned_now' => 'Jelenleg tiltva',
+    'server.sec.banned_total' => 'Összes tiltott',
+    'server.sec.unavailable' => 'nem elérhető',
+    'server.redis.info' => 'Redis v{version} — {memory} használatban, {keys} kulcs',
     'server.action.fail'       => 'Az OpenVPN {action} művelete sikertelen.',
 
     'settings.title'           => 'Beállítások',

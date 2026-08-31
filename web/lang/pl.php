@@ -72,6 +72,13 @@ return [
     'server.control.restart'   => 'Uruchom ponownie',
     'server.sysinfo'           => 'Informacje o systemie',
     'server.action.ok'         => 'OpenVPN został pomyślnie {action}.',
+
+    'server.security' => 'Bezpieczeństwo',
+    'server.sec.jail' => 'Jail',
+    'server.sec.banned_now' => 'Aktualnie zablokowane',
+    'server.sec.banned_total' => 'Łącznie zablokowane',
+    'server.sec.unavailable' => 'niedostępne',
+    'server.redis.info' => 'Redis v{version} — użyte {memory}, {keys} klucz(y)',
     'server.action.fail'       => 'Akcja {action} dla OpenVPN nie powiodła się.',
 
     'settings.title'           => 'Ustawienia',

@@ -27,8 +27,12 @@ $services = [
     'OpenVPN'     => service_status('openvpn-server@server'),
     'Unbound DNS' => service_status('unbound'),
     'Apache'      => service_status('apache2'),
+    'Redis'       => service_status('redis-server'),
+    'fail2ban'    => service_status('fail2ban'),
 ];
-$ipForward = ip_forward_enabled();
+$ipForward   = ip_forward_enabled();
+$redisInfo   = redis_info();
+$f2bStats    = fail2ban_stats();
 
 html_head(t('server.title'));
 html_nav($user);
@@ -69,6 +73,41 @@ html_nav($user);
                 </tr>
             </tbody>
         </table></div>
+    </div>
+
+    <div class="section">
+        <h3><?= t('server.security') ?></h3>
+        <div class="table-wrap"><table>
+            <thead>
+                <tr>
+                    <th><?= t('server.sec.jail') ?></th>
+                    <th><?= t('server.sec.banned_now') ?></th>
+                    <th><?= t('server.sec.banned_total') ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($f2bStats as $jail => $s): ?>
+                <tr>
+                    <td><?= h($jail) ?></td>
+                    <?php if ($s === null): ?>
+                        <td colspan="2" style="color:var(--muted)"><?= t('server.sec.unavailable') ?></td>
+                    <?php else: ?>
+                        <td><?= h((string) $s['current']) ?></td>
+                        <td><?= h((string) $s['total']) ?></td>
+                    <?php endif; ?>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table></div>
+        <?php if ($redisInfo): ?>
+        <p style="margin-top:.75rem;font-size:13px;color:var(--muted)">
+            <?= t('server.redis.info', [
+                'version' => h($redisInfo['version']),
+                'memory'  => h($redisInfo['memory']),
+                'keys'    => h((string) $redisInfo['keys']),
+            ]) ?>
+        </p>
+        <?php endif; ?>
     </div>
 
     <div class="section">

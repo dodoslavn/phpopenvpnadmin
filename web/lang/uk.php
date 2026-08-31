@@ -72,6 +72,13 @@ return [
     'server.control.restart'   => 'Перезапустити',
     'server.sysinfo'           => 'Інформація про систему',
     'server.action.ok'         => 'OpenVPN успішно {action}.',
+
+    'server.security' => 'Безпека',
+    'server.sec.jail' => 'Jail',
+    'server.sec.banned_now' => 'Заблоковано зараз',
+    'server.sec.banned_total' => 'Всього заблоковано',
+    'server.sec.unavailable' => 'недоступно',
+    'server.redis.info' => 'Redis v{version} — використано {memory}, {keys} ключ(ів)',
     'server.action.fail'       => 'Дія {action} для OpenVPN не вдалася.',
 
     'settings.title'           => 'Налаштування',

@@ -72,6 +72,13 @@ return [
     'server.control.restart'   => 'Reštartovať',
     'server.sysinfo'           => 'Informácie o systéme',
     'server.action.ok'         => 'OpenVPN bol úspešne {action}.',
+
+    'server.security' => 'Bezpečnosť',
+    'server.sec.jail' => 'Jail',
+    'server.sec.banned_now' => 'Aktuálne blokované',
+    'server.sec.banned_total' => 'Celkovo blokované',
+    'server.sec.unavailable' => 'nedostupné',
+    'server.redis.info' => 'Redis v{version} — použitých {memory}, {keys} kľúčov',
     'server.action.fail'       => 'Akcia {action} pre OpenVPN zlyhala.',
 
     'settings.title'           => 'Nastavenia',

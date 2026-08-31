@@ -79,6 +79,12 @@ return [
     'server.sysinfo'           => 'System Information',
     'server.action.ok'         => 'OpenVPN {action}ed successfully.',
     'server.action.fail'       => 'Failed to {action} OpenVPN.',
+    'server.security'          => 'Security',
+    'server.sec.jail'          => 'Jail',
+    'server.sec.banned_now'    => 'Currently Banned',
+    'server.sec.banned_total'  => 'Total Banned',
+    'server.sec.unavailable'   => 'unavailable',
+    'server.redis.info'        => 'Redis v{version} — {memory} used, {keys} key(s)',
 
     // Settings
     'settings.title'           => 'Settings',
