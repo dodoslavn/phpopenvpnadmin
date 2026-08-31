@@ -98,6 +98,16 @@ nav ul li a.active { color: var(--primary); border-bottom-color: var(--primary);
     flex-direction: column;
     gap: .15rem;
 }
+.user-menu-link {
+    display: block;
+    padding: .4rem .5rem;
+    border-radius: calc(var(--radius) - 1px);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+}
+.user-menu-link:hover { background: var(--bg); }
 .user-menu-logout {
     display: block;
     padding: .4rem .5rem;
@@ -206,6 +216,8 @@ footer {
     flex-wrap: wrap;
 }
 .footer-brand { font-size: 13px; color: var(--muted); }
+.footer-repo { color: var(--muted); text-decoration: none; }
+.footer-repo:hover { color: var(--primary); }
 .footer-version { font-size: 11px; color: var(--border); }
 .footer-langs { display: flex; gap: .5rem; align-items: center; font-size: 13px; }
 .footer-langs a { color: var(--muted); text-decoration: none; }

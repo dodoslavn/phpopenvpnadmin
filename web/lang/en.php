@@ -123,6 +123,19 @@ return [
     'users.err.password'       => 'Password must be at least 8 characters.',
     'users.delete.confirm'     => "Delete '{name}'? This cannot be undone.",
 
+    // Account / password change
+    'account.title'            => 'My Account',
+    'account.change_password'  => 'Change Password',
+    'account.current_password' => 'Current Password',
+    'account.new_password'     => 'New Password',
+    'account.new_password2'    => 'Confirm New Password',
+    'account.submit'           => 'Change Password',
+    'account.ok'               => 'Password changed successfully.',
+    'account.err.current'      => 'Current password is incorrect.',
+    'account.err.length'       => 'New password must be at least 8 characters.',
+    'account.err.match'        => 'New passwords do not match.',
+    'nav.account'              => 'My Account',
+
     // Wizard
     'wizard.title'             => 'First-Run Setup',
     'wizard.desc'              => 'This wizard will generate your VPN PKI and configure OpenVPN. It only runs once.',

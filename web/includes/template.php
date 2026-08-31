@@ -40,9 +40,11 @@ function html_nav(array $user): void {
         echo $link('/admin/settings.php',  t('nav.settings'));
     }
     echo '</ul>';
+    $account = t('nav.account');
     echo '<details class="user-menu nav-links">';
     echo   '<summary>' . $username . ' <span class="badge">' . $role . '</span></summary>';
     echo   '<div class="user-menu-panel">';
+    echo     '<a href="/user/account.php" class="user-menu-link">' . $account . '</a>';
     echo     '<a href="/logout.php" class="user-menu-logout">' . $logout . '</a>';
     echo   '</div>';
     echo '</details>';
@@ -58,7 +60,9 @@ function html_foot(): void {
 
     echo '<footer>';
     echo '<div class="footer-inner">';
-    echo '<span class="footer-brand">' . htmlspecialchars($appName) . ' <span class="footer-version">v' . htmlspecialchars($version) . '</span></span>';
+    echo '<span class="footer-brand">'
+       . '<a href="https://github.com/dodoslavn/phpopenvpnadmin" class="footer-repo" target="_blank" rel="noopener">' . htmlspecialchars($appName) . '</a>'
+       . ' <span class="footer-version">v' . htmlspecialchars($version) . '</span></span>';
 
     if (count($langs) > 1) {
         echo '<div class="footer-langs">';
