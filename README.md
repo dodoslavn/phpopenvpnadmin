@@ -22,6 +22,7 @@ This Git repository contains:
 - PHP - to render the website
 - SQLite - for database
 - IPTables - as a firewall ( it doesnt use NFTables )
+- OpenSSL - tool for certificates
 
 ## How to install
 Switch to root OS account:
