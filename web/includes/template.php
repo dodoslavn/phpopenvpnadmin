@@ -20,25 +20,34 @@ function html_nav(array $user): void {
     $username = htmlspecialchars($user['username']);
     $role     = $user['role'];
     $isAdmin  = $role === 'admin';
+    $path     = strtok($_SERVER['REQUEST_URI'], '?');
     $langHtml = _lang_switcher_html();
+    $logout   = t('nav.logout');
+
+    $link = function(string $href, string $label) use ($path): string {
+        $active = ($path === $href) ? ' class="active"' : '';
+        return '<li><a href="' . $href . '"' . $active . '>' . $label . '</a></li>';
+    };
 
     echo '<nav id="mainnav">';
     echo '<div class="nav-brand"><img src="/assets/logo.svg" alt="logo" height="28"> PHP OpenVPN Admin</div>';
-    echo '<button class="nav-toggle" aria-label="Menu" onclick="document.getElementById(\'mainnav\').classList.toggle(\'open\')">&#9776;</button>';
+    echo '<button class="nav-toggle" aria-label="Menu" onclick="var n=document.getElementById(\'mainnav\');n.classList.toggle(\'open\')">&#9776;</button>';
     echo '<ul class="nav-links">';
-    echo '<li><a href="/user/dashboard.php">' . t('nav.profiles') . '</a></li>';
+    echo $link('/user/dashboard.php', t('nav.profiles'));
     if ($isAdmin) {
-        echo '<li><a href="/admin/dashboard.php">' . t('nav.dashboard') . '</a></li>';
-        echo '<li><a href="/admin/server.php">' . t('nav.server') . '</a></li>';
-        echo '<li><a href="/admin/users.php">' . t('nav.users') . '</a></li>';
-        echo '<li><a href="/admin/settings.php">' . t('nav.settings') . '</a></li>';
+        echo $link('/admin/dashboard.php', t('nav.dashboard'));
+        echo $link('/admin/server.php',    t('nav.server'));
+        echo $link('/admin/users.php',     t('nav.users'));
+        echo $link('/admin/settings.php',  t('nav.settings'));
     }
     echo '</ul>';
-    echo '<div class="nav-user nav-links">';
-    echo $langHtml;
-    echo "<span>{$username}</span> <span class=\"badge\">{$role}</span> ";
-    echo '<a href="/logout.php">' . t('nav.logout') . '</a>';
-    echo '</div>';
+    echo '<details class="user-menu nav-links">';
+    echo   '<summary>' . $username . ' <span class="badge">' . $role . '</span></summary>';
+    echo   '<div class="user-menu-panel">';
+    if ($langHtml) echo '<div class="user-menu-lang">' . $langHtml . '</div>';
+    echo     '<a href="/logout.php" class="user-menu-logout">' . $logout . '</a>';
+    echo   '</div>';
+    echo '</details>';
     echo '</nav>';
 }
 
