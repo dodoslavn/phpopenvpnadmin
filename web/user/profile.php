@@ -44,7 +44,7 @@ $msgType = 'info';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['profile_name'] ?? '');
 
-    if (!preg_match('/^[a-zA-Z0-9_\-]{2,32}$/', $name)) {
+    if (!preg_match('/^[a-zA-Z0-9\-]{2,32}$/', $name)) {
         $errors[] = t('profile.err.name');
     }
 
