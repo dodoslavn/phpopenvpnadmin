@@ -1,5 +1,5 @@
 # PHP OpenVPN Admin
-A website written in PHP, to manage a self-hosted OpenVPN server. It is intended to run this on VM, and this VM will be only to server as a VPN server. Cheap rented VM suits the best.  
+A website written in PHP, to manage a self-hosted OpenVPN server. It is intended to run this on VM, and this VM will be only to server as a VPN server. Cheap rented VM suits the best. This tool is written in a way to use minimum memory as possible, thats why it was writen in PHP without FPM and SQLite.  
 
 > **This project is completely vibe-coded** — written by an AI coding agent
 > from natural-language instructions, with human review and testing but no
