@@ -33,7 +33,7 @@ Move to a folder where you will keep the application permanently, e.g.:
 > cd /opt/git/
 
 Clone the repository:
-> git clone https://github.com/dodoslavn/phpopenvpnadmin
+> git clone https://github.com/dodoslavn/phpopenvpnadmin  
 > cd phpopenvpnadmin
 
 Run the installation script (can be safely re-run):
