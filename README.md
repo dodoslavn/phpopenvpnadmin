@@ -29,7 +29,7 @@ Switch to the root account:
 > su - root
 
 Move to a folder where you will keep the application permanently, e.g.:
-> mkdir -p /opt/git/
+> mkdir -p /opt/git/  
 > cd /opt/git/
 
 Clone the repository:
