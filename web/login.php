@@ -39,23 +39,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 html_head(t('login.title'));
 ?>
 <div class="login-wrap">
-    <div class="login-box">
-        <img src="/assets/logo.svg" alt="logo" height="48">
-        <div class="login-app-name"><?= h(APP_NAME) ?></div>
-        <h1><?= t('login.title') ?></h1>
-        <?php if ($error): ?>
-            <?php flash($error, 'error'); ?>
-        <?php endif; ?>
-        <form method="post">
-            <label><?= t('login.username') ?>
-                <input type="text" name="username" autocomplete="username" required
-                       value="<?= h($_POST['username'] ?? '') ?>">
-            </label>
-            <label><?= t('login.password') ?>
-                <input type="password" name="password" autocomplete="current-password" required>
-            </label>
-            <button type="submit"><?= t('login.submit') ?></button>
-        </form>
+    <div class="login-outer">
+        <div class="login-header">
+            <img src="/assets/logo.svg" alt="logo" height="48">
+            <div class="login-app-name"><?= h(APP_NAME) ?></div>
+        </div>
+        <div class="login-box">
+            <h1><?= t('login.title') ?></h1>
+            <?php if ($error): ?>
+                <?php flash($error, 'error'); ?>
+            <?php endif; ?>
+            <form method="post">
+                <label><?= t('login.username') ?>
+                    <input type="text" name="username" autocomplete="username" required
+                           value="<?= h($_POST['username'] ?? '') ?>">
+                </label>
+                <label><?= t('login.password') ?>
+                    <input type="password" name="password" autocomplete="current-password" required>
+                </label>
+                <button type="submit"><?= t('login.submit') ?></button>
+            </form>
+        </div>
     </div>
 </div>
 <?php html_foot(); ?>

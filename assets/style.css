@@ -239,15 +239,16 @@ footer {
     border-radius: var(--radius);
     padding: 2rem;
     width: 100%;
-    max-width: 400px;
     box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 .wizard-box { max-width: 520px; }
-.login-box h1, .wizard-box h1 { font-size: 18px; }
-.login-app-name { font-size: 15px; font-weight: 600; color: var(--primary); text-align: center; margin-bottom: -.25rem; }
+.login-outer { display: flex; flex-direction: column; align-items: center; gap: 1.25rem; width: 100%; max-width: 380px; }
+.login-header { display: flex; flex-direction: column; align-items: center; gap: .5rem; }
+.login-app-name { font-size: 18px; font-weight: 700; color: var(--text); text-align: center; }
+.login-box h1, .wizard-box h1 { font-size: 16px; color: var(--muted); font-weight: 500; }
 .login-box img, .wizard-box img { align-self: center; }
 .login-box form, .wizard-box form { display: flex; flex-direction: column; gap: .75rem; }
 .login-box form button, .wizard-box form button { width: 100%; justify-content: center; margin-top: .5rem; }
