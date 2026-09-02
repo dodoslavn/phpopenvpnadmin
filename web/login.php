@@ -41,6 +41,7 @@ html_head(t('login.title'));
 <div class="login-wrap">
     <div class="login-box">
         <img src="/assets/logo.svg" alt="logo" height="48">
+        <div class="login-app-name"><?= h(APP_NAME) ?></div>
         <h1><?= t('login.title') ?></h1>
         <?php if ($error): ?>
             <?php flash($error, 'error'); ?>

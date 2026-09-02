@@ -227,11 +227,11 @@ footer {
 
 /* ── Login / Wizard ──────────────────────────────── */
 .login-wrap, .wizard-wrap {
-    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     background: var(--bg);
+    padding: 2rem 1rem;
 }
 .login-box, .wizard-box {
     background: var(--surface);
@@ -247,6 +247,7 @@ footer {
 }
 .wizard-box { max-width: 520px; }
 .login-box h1, .wizard-box h1 { font-size: 18px; }
+.login-app-name { font-size: 15px; font-weight: 600; color: var(--primary); text-align: center; margin-bottom: -.25rem; }
 .login-box img, .wizard-box img { align-self: center; }
 .login-box form, .wizard-box form { display: flex; flex-direction: column; gap: .75rem; }
 .login-box form button, .wizard-box form button { width: 100%; justify-content: center; margin-top: .5rem; }
