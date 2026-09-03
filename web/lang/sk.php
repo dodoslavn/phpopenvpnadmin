@@ -148,7 +148,7 @@ return [
     'wizard.log.start_ovpn'    => 'Spúšťanie OpenVPN...',
     'wizard.log.start_warn'    => 'Varovanie: Spustenie OpenVPN zlyhalo — skontrolujte logy. PKI je pripravená.',
     'wizard.done'              => 'Nastavenie dokončené! OpenVPN beží.',
-    'wizard.done.login'        => 'Teraz sa môžete <a href="/login.php">prihlásiť</a>.',
+    'wizard.done.login'        => 'Teraz sa môžete <a href="/login">prihlásiť</a>.',
     'wizard.done.ssl'          => '<strong>Nezabudnite:</strong> Nainštalujte SSL certifikát do <code>/etc/vpnadmin/ssl/</code> a reštartujte Apache pre povolenie HTTPS.',
     'wizard.err.user'          => 'Používateľské meno správcu je povinné.',
     'wizard.err.password'      => 'Heslo musí mať aspoň 8 znakov.',

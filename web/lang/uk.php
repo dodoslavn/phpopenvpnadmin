@@ -148,7 +148,7 @@ return [
     'wizard.log.start_ovpn'    => 'Запуск OpenVPN...',
     'wizard.log.start_warn'    => 'Попередження: Запуск OpenVPN не вдався — перевірте логи. PKI готовий.',
     'wizard.done'              => 'Налаштування завершено! OpenVPN працює.',
-    'wizard.done.login'        => 'Тепер ви можете <a href="/login.php">увійти</a>.',
+    'wizard.done.login'        => 'Тепер ви можете <a href="/login">увійти</a>.',
     'wizard.done.ssl'          => '<strong>Пам\'ятайте:</strong> Встановіть SSL сертифікат у <code>/etc/vpnadmin/ssl/</code> та перезапустіть Apache для увімкнення HTTPS.',
     'wizard.err.user'          => 'Ім\'я адміністратора є обов\'язковим.',
     'wizard.err.password'      => 'Пароль має бути не менше 8 символів.',

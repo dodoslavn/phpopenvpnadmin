@@ -39,7 +39,7 @@ html_nav($user);
     <?php if ($message): flash($message, $msgType); endif; ?>
 
     <div class="section">
-        <a href="/user/profile.php" class="btn"><?= t('profiles.generate') ?></a>
+        <a href="/profile" class="btn"><?= t('profiles.generate') ?></a>
     </div>
 
     <div class="section">
@@ -67,7 +67,7 @@ html_nav($user);
                         </td>
                         <td>
                             <?php if (!$p['revoked']): ?>
-                            <a href="/user/profile.php?download=<?= $p['id'] ?>" class="btn btn-sm"><?= t('profiles.download') ?></a>
+                            <a href="/profile?download=<?= $p['id'] ?>" class="btn btn-sm"><?= t('profiles.download') ?></a>
                             <form method="post" class="inline-form"
                                   onsubmit="return confirm('<?= h(t('profiles.revoke.confirm')) ?>')">
                                 <input type="hidden" name="action" value="revoke">

@@ -5,20 +5,20 @@ require_once __DIR__ . '/includes/auth.php';
 
 // First-run check
 if (!is_setup()) {
-    header('Location: /setup/wizard.php');
+    header('Location: /setup');
     exit;
 }
 
 // Auth check — redirect to login or dashboard
 $user = current_user();
 if (!$user) {
-    header('Location: /login.php');
+    header('Location: /login');
     exit;
 }
 
 if ($user['role'] === 'admin') {
-    header('Location: /admin/dashboard.php');
+    header('Location: /dashboard');
 } else {
-    header('Location: /user/dashboard.php');
+    header('Location: /profiles');
 }
 exit;

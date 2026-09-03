@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message   = t('profile.created.ok', ['name' => $name]);
             $msgType   = 'success';
 
-            header("Location: /user/profile.php?download={$profileId}");
+            header("Location: /profile?download={$profileId}");
             exit;
         }
     }
@@ -99,6 +99,6 @@ html_nav($user);
         <button type="submit"><?= t('profile.submit') ?></button>
     </form>
 
-    <p><a href="/user/dashboard.php"><?= t('profile.back') ?></a></p>
+    <p><a href="/profiles"><?= t('profile.back') ?></a></p>
 </main>
 <?php html_foot(); ?>

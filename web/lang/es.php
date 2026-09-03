@@ -148,7 +148,7 @@ return [
     'wizard.log.start_ovpn'    => 'Iniciando OpenVPN...',
     'wizard.log.start_warn'    => 'Advertencia: No se pudo iniciar OpenVPN — revisa los registros. La PKI está lista.',
     'wizard.done'              => '¡Configuración completada! OpenVPN está activo.',
-    'wizard.done.login'        => 'Ahora puedes <a href="/login.php">iniciar sesión</a>.',
+    'wizard.done.login'        => 'Ahora puedes <a href="/login">iniciar sesión</a>.',
     'wizard.done.ssl'          => '<strong>Recuerda:</strong> Instala tu certificado SSL en <code>/etc/vpnadmin/ssl/</code> y reinicia Apache para habilitar HTTPS.',
     'wizard.err.user'          => 'El nombre de usuario del administrador es obligatorio.',
     'wizard.err.password'      => 'La contraseña debe tener al menos 8 caracteres.',

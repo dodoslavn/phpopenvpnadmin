@@ -32,20 +32,20 @@ function html_nav(array $user): void {
     echo '<div class="nav-brand"><img src="/assets/logo.svg" alt="logo" height="28"> PHP OpenVPN Admin</div>';
     echo '<button class="nav-toggle" aria-label="Menu" onclick="var n=document.getElementById(\'mainnav\');n.classList.toggle(\'open\')">&#9776;</button>';
     echo '<ul class="nav-links">';
-    echo $link('/user/dashboard.php', t('nav.profiles'));
+    echo $link('/profiles', t('nav.profiles'));
     if ($isAdmin) {
-        echo $link('/admin/dashboard.php', t('nav.dashboard'));
-        echo $link('/admin/server.php',    t('nav.server'));
-        echo $link('/admin/users.php',     t('nav.users'));
-        echo $link('/admin/settings.php',  t('nav.settings'));
+        echo $link('/dashboard', t('nav.dashboard'));
+        echo $link('/server',    t('nav.server'));
+        echo $link('/users',     t('nav.users'));
+        echo $link('/settings',  t('nav.settings'));
     }
     echo '</ul>';
     $account = t('nav.account');
     echo '<details class="user-menu nav-links">';
     echo   '<summary>' . $username . ' <span class="badge">' . $role . '</span></summary>';
     echo   '<div class="user-menu-panel">';
-    echo     '<a href="/user/account.php" class="user-menu-link">' . $account . '</a>';
-    echo     '<a href="/logout.php" class="user-menu-logout">' . $logout . '</a>';
+    echo     '<a href="/account" class="user-menu-link">' . $account . '</a>';
+    echo     '<a href="/logout" class="user-menu-logout">' . $logout . '</a>';
     echo   '</div>';
     echo '</details>';
     echo '</nav>';

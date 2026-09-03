@@ -158,7 +158,7 @@ return [
     'wizard.log.start_ovpn'    => 'OpenVPN wird gestartet...',
     'wizard.log.start_warn'    => 'Warnung: OpenVPN-Start fehlgeschlagen — Serverlogs prüfen. PKI ist bereit.',
     'wizard.done'              => 'Einrichtung abgeschlossen! OpenVPN läuft.',
-    'wizard.done.login'        => 'Du kannst dich jetzt <a href="/login.php">anmelden</a>.',
+    'wizard.done.login'        => 'Du kannst dich jetzt <a href="/login">anmelden</a>.',
     'wizard.done.ssl'          => '<strong>Wichtig:</strong> Installiere dein SSL-Zertifikat in <code>/etc/vpnadmin/ssl/</code> und starte Apache neu, um HTTPS zu aktivieren.',
     'wizard.err.user'          => 'Admin-Benutzername ist erforderlich.',
     'wizard.err.password'      => 'Passwort muss mindestens 8 Zeichen lang sein.',

@@ -6,7 +6,7 @@ require_once __DIR__ . '/includes/template.php';
 require_once __DIR__ . '/includes/ratelimit.php';
 
 if (!is_setup()) {
-    header('Location: /setup/wizard.php');
+    header('Location: /setup');
     exit;
 }
 

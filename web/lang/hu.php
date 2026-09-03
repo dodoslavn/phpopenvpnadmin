@@ -148,7 +148,7 @@ return [
     'wizard.log.start_ovpn'    => 'OpenVPN indítása...',
     'wizard.log.start_warn'    => 'Figyelmeztetés: Az OpenVPN indítása sikertelen — ellenőrizze a naplókat. A PKI készen áll.',
     'wizard.done'              => 'A beállítás befejeződött! Az OpenVPN fut.',
-    'wizard.done.login'        => 'Most már <a href="/login.php">bejelentkezhet</a>.',
+    'wizard.done.login'        => 'Most már <a href="/login">bejelentkezhet</a>.',
     'wizard.done.ssl'          => '<strong>Ne felejtse:</strong> Telepítse az SSL tanúsítványt a <code>/etc/vpnadmin/ssl/</code> mappába, és indítsa újra az Apache-t a HTTPS engedélyezéséhez.',
     'wizard.err.user'          => 'Az adminisztrátor felhasználónevét kötelező megadni.',
     'wizard.err.password'      => 'A jelszónak legalább 8 karakternek kell lennie.',
