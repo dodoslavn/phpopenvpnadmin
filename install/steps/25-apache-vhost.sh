@@ -12,7 +12,7 @@ cat > /etc/apache2/sites-available/vpnadmin.conf << 'EOF'
     DirectoryIndex index.php
 
     <Directory /var/www/vpnadmin>
-        Options -Indexes -FollowSymLinks
+        Options -Indexes +FollowSymLinks
         AllowOverride All
         Require all granted
     </Directory>
@@ -37,7 +37,7 @@ cat > /etc/apache2/sites-available/vpnadmin.conf << 'EOF'
     SSLCertificateKeyFile /etc/vpnadmin/ssl/server.key
 
     <Directory /var/www/vpnadmin>
-        Options -Indexes -FollowSymLinks
+        Options -Indexes +FollowSymLinks
         AllowOverride All
         Require all granted
     </Directory>
