@@ -324,7 +324,6 @@ log-append  /var/log/vpnadmin/openvpn.log
 verb 3
 
 auth-user-pass-verify /etc/openvpn/server/check-password.sh via-env
-username-as-common-name
 script-security 3
 
 up   /etc/openvpn/server/up.sh
