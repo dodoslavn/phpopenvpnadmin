@@ -6,8 +6,8 @@ info "Configuring unbound DNS resolver..."
 
 cat > /etc/unbound/unbound.conf.d/vpnadmin.conf << 'EOF'
 server:
-    # Listen only on VPN tunnel interface
-    interface: 10.8.0.1
+    # Listen on all interfaces (tun0 may not exist at boot time)
+    interface: 0.0.0.0
     port: 53
     do-ip4: yes
     do-ip6: no
@@ -43,6 +43,6 @@ log "Written /etc/unbound/unbound.conf.d/vpnadmin.conf"
 unbound-checkconf /etc/unbound/unbound.conf.d/vpnadmin.conf 2>/dev/null || \
     unbound-checkconf || warn "unbound config check had warnings (may need VPN interface to exist)"
 
-log "unbound configured to listen on 10.8.0.1 for VPN clients"
+log "unbound configured to listen on 0.0.0.0 (restricted to VPN subnet via access-control)"
 
 complete_step
