@@ -9,6 +9,12 @@ $user = require_admin();
 purge_expired_sessions();
 
 $clients    = openvpn_status();
+
+// Client certs identify by login username (see generate_client_cert()); resolve
+// to each user's display name for presentation here without touching that identity.
+$displayNames = db()->query('SELECT username, display_name FROM users')
+    ->fetchAll(PDO::FETCH_KEY_PAIR);
+
 $totalUsers = db()->query('SELECT COUNT(*) FROM users WHERE enabled = 1')->fetchColumn();
 $totalProfiles = db()->query('SELECT COUNT(*) FROM profiles WHERE revoked = 0')->fetchColumn();
 $serverIp   = setting('server_ip', 'not set');
@@ -58,7 +64,7 @@ html_nav($user);
                 <tbody>
                     <?php foreach ($clients as $c): ?>
                     <tr>
-                        <td><?= h($c['name']) ?></td>
+                        <td><?= h(($displayNames[$c['name']] ?? null) ?: $c['name']) ?></td>
                         <td><?= h($c['profile']) ?: '<span style="color:var(--muted)">—</span>' ?></td>
                         <td><?= h($c['remote_ip']) ?></td>
                         <td><?= fmt_bytes($c['bytes_rx']) ?></td>

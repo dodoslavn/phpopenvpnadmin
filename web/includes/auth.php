@@ -22,7 +22,7 @@ function current_user(): ?array {
     if (!$token) return null;
 
     $stmt = db()->prepare(
-        'SELECT s.user_id, s.expires_at, u.username, u.role, u.enabled
+        'SELECT s.user_id, s.expires_at, u.username, u.display_name, u.role, u.enabled
          FROM sessions s JOIN users u ON u.id = s.user_id
          WHERE s.token = ?'
     );
@@ -90,10 +90,11 @@ function logout(): void {
     }
 }
 
-function create_user(string $username, string $password, string $role = 'user'): int {
+function create_user(string $username, string $password, string $role = 'user', ?string $displayName = null): int {
     $hash = password_hash($password, PASSWORD_BCRYPT);
-    $stmt = db()->prepare('INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)');
-    $stmt->execute([strtolower(trim($username)), $hash, $role]);
+    $displayName = $displayName !== null && trim($displayName) !== '' ? trim($displayName) : null;
+    $stmt = db()->prepare('INSERT INTO users (username, password_hash, role, display_name) VALUES (?, ?, ?, ?)');
+    $stmt->execute([strtolower(trim($username)), $hash, $role, $displayName]);
     return (int) db()->lastInsertId();
 }
 

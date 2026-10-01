@@ -11,7 +11,21 @@ $message = '';
 $msgType = 'info';
 $errors  = [];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'display_name') {
+    $displayName = trim($_POST['display_name'] ?? '');
+
+    if (mb_strlen($displayName) > 64) {
+        $errors[] = t('account.err.display_name');
+    } else {
+        db()->prepare('UPDATE users SET display_name = ? WHERE id = ?')
+            ->execute([$displayName !== '' ? $displayName : null, $userId]);
+        $user['display_name'] = $displayName !== '' ? $displayName : null;
+        $message = t('account.display_name.ok');
+        $msgType = 'success';
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'password') {
     $current  = $_POST['current_password'] ?? '';
     $new      = $_POST['new_password'] ?? '';
     $new2     = $_POST['new_password2'] ?? '';
@@ -47,8 +61,23 @@ html_nav($user);
     <?php foreach ($errors as $e): flash($e, 'error'); endforeach; ?>
 
     <div class="section">
+        <h3><?= t('account.display_name') ?></h3>
+        <p class="muted"><?= t('account.display_name.hint') ?></p>
+        <form method="post" class="form-grid">
+            <input type="hidden" name="action" value="display_name">
+            <label><?= t('account.display_name') ?>
+                <input type="text" name="display_name" maxlength="64"
+                       placeholder="<?= h($user['username']) ?>"
+                       value="<?= h((string) ($user['display_name'] ?? '')) ?>">
+            </label>
+            <button type="submit"><?= t('account.display_name.submit') ?></button>
+        </form>
+    </div>
+
+    <div class="section">
         <h3><?= t('account.change_password') ?></h3>
         <form method="post" class="form-grid">
+            <input type="hidden" name="action" value="password">
             <label><?= t('account.current_password') ?>
                 <input type="password" name="current_password" required autocomplete="current-password">
             </label>

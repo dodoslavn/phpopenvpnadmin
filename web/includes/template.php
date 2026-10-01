@@ -16,12 +16,18 @@ function html_head(string $title): void {
 HTML;
 }
 
+function display_name(array $user): string {
+    $name = trim((string) ($user['display_name'] ?? ''));
+    return $name !== '' ? $name : $user['username'];
+}
+
 function html_nav(array $user): void {
-    $username = htmlspecialchars($user['username']);
-    $role     = $user['role'];
-    $isAdmin  = $role === 'admin';
-    $path     = strtok($_SERVER['REQUEST_URI'], '?');
-    $logout   = t('nav.logout');
+    $shownName = htmlspecialchars(display_name($user));
+    $username  = htmlspecialchars($user['username']);
+    $role      = $user['role'];
+    $isAdmin   = $role === 'admin';
+    $path      = strtok($_SERVER['REQUEST_URI'], '?');
+    $logout    = t('nav.logout');
 
     $link = function(string $href, string $label) use ($path): string {
         $active = ($path === $href) ? ' class="active"' : '';
@@ -42,7 +48,7 @@ function html_nav(array $user): void {
     echo '</ul>';
     $account = t('nav.account');
     echo '<details class="user-menu nav-links">';
-    echo   '<summary>' . $username . ' <span class="badge">' . $role . '</span></summary>';
+    echo   '<summary title="' . $username . '">' . $shownName . ' <span class="badge">' . $role . '</span></summary>';
     echo   '<div class="user-menu-panel">';
     echo     '<a href="/account" class="user-menu-link">' . $account . '</a>';
     echo     '<a href="/logout" class="user-menu-logout">' . $logout . '</a>';

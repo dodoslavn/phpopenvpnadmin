@@ -13,14 +13,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
     if ($action === 'create') {
-        $username = strtolower(trim($_POST['username'] ?? ''));
-        $password = $_POST['password'] ?? '';
-        $role     = $_POST['role'] === 'admin' ? 'admin' : 'user';
+        $username    = strtolower(trim($_POST['username'] ?? ''));
+        $password    = $_POST['password'] ?? '';
+        $role        = $_POST['role'] === 'admin' ? 'admin' : 'user';
+        $displayName = trim($_POST['display_name'] ?? '');
 
         if (!preg_match('/^[a-z0-9_]{3,32}$/', $username))
             $errors[] = t('users.err.username');
         if (strlen($password) < 8)
             $errors[] = t('users.err.password');
+        if (mb_strlen($displayName) > 64)
+            $errors[] = t('account.err.display_name');
 
         if (empty($errors)) {
             $exists = db()->prepare('SELECT id FROM users WHERE username = ?');
@@ -28,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($exists->fetch()) {
                 $errors[] = t('users.err.exists');
             } else {
-                create_user($username, $password, $role);
+                create_user($username, $password, $role, $displayName);
                 $message = t('users.created.ok', ['name' => $username]);
                 $msgType = 'success';
             }
@@ -62,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $users = db()->query(
-    'SELECT u.id, u.username, u.role, u.enabled, u.created_at,
+    'SELECT u.id, u.username, u.display_name, u.role, u.enabled, u.created_at,
             COUNT(p.id) as profile_count
      FROM users u
      LEFT JOIN profiles p ON p.user_id = u.id AND p.revoked = 0
@@ -86,6 +89,10 @@ html_nav($admin);
                 <input type="text" name="username" pattern="[a-z0-9_]{3,32}" required
                        value="<?= h($_POST['username'] ?? '') ?>">
             </label>
+            <label><?= t('account.display_name') ?>
+                <input type="text" name="display_name" maxlength="64"
+                       value="<?= h($_POST['display_name'] ?? '') ?>">
+            </label>
             <label><?= t('users.col.password') ?>
                 <input type="password" name="password" minlength="8" required>
             </label>
@@ -105,6 +112,7 @@ html_nav($admin);
             <thead>
                 <tr>
                     <th><?= t('users.col.username') ?></th>
+                    <th><?= t('account.display_name') ?></th>
                     <th><?= t('users.col.role') ?></th>
                     <th><?= t('users.col.profiles') ?></th>
                     <th><?= t('users.col.status') ?></th>
@@ -116,6 +124,7 @@ html_nav($admin);
                 <?php foreach ($users as $u): ?>
                 <tr class="<?= $u['enabled'] ? '' : 'row-disabled' ?>">
                     <td><?= h($u['username']) ?></td>
+                    <td><?= h($u['display_name'] ?: '') ?: '<span class="muted">—</span>' ?></td>
                     <td><span class="badge"><?= h($u['role']) ?></span></td>
                     <td><?= h((string)$u['profile_count']) ?></td>
                     <td><?= $u['enabled']

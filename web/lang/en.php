@@ -138,6 +138,11 @@ return [
 
     // Account / password change
     'account.title'            => 'My Account',
+    'account.display_name'     => 'Display Name',
+    'account.display_name.hint'   => 'Shown across the site instead of your login username. Leave blank to use your username.',
+    'account.display_name.submit' => 'Save Display Name',
+    'account.display_name.ok'     => 'Display name updated.',
+    'account.err.display_name'    => 'Display name must be 64 characters or fewer.',
     'account.change_password'  => 'Change Password',
     'account.current_password' => 'Current Password',
     'account.new_password'     => 'New Password',

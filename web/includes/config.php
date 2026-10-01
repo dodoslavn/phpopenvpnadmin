@@ -1,6 +1,6 @@
 <?php
 define('APP_NAME',    'PHP OpenVPN Admin');
-define('APP_VERSION', '1.0.0');
+define('APP_VERSION', '1.1.0');
 
 define('DB_PATH',      '/var/lib/vpnadmin/db/vpnadmin.db');
 define('PKI_DIR',      '/var/lib/vpnadmin/pki');
