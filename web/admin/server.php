@@ -33,6 +33,7 @@ $services = [
 $ipForward   = ip_forward_enabled();
 $redisInfo   = redis_info();
 $f2bStats    = fail2ban_stats();
+$crl         = crl_status();
 
 html_head(t('server.title'));
 html_nav($user);
@@ -68,6 +69,20 @@ html_nav($user);
                             <span class="badge badge-ok"><?= t('server.ip_forward.on') ?></span>
                         <?php else: ?>
                             <span class="badge badge-off"><?= t('server.ip_forward.off') ?></span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td><?= t('server.crl') ?></td>
+                    <td>
+                        <?php if ($crl === null): ?>
+                            <span class="badge badge-off"><?= t('server.crl.unknown') ?></span>
+                        <?php elseif ($crl['expired']): ?>
+                            <span class="badge badge-off"><?= t('server.crl.expired', ['date' => date('Y-m-d H:i', $crl['next_update'])]) ?></span>
+                        <?php elseif ($crl['expiring_soon']): ?>
+                            <span class="badge badge-warn"><?= t('server.crl.expiring_soon', ['date' => date('Y-m-d H:i', $crl['next_update'])]) ?></span>
+                        <?php else: ?>
+                            <span class="badge badge-ok"><?= t('server.crl.ok', ['date' => date('Y-m-d H:i', $crl['next_update'])]) ?></span>
                         <?php endif; ?>
                     </td>
                 </tr>

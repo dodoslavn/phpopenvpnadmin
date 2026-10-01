@@ -48,5 +48,8 @@ Once you generate an OpenVPN profile (.ovpn file), download it and import it int
 
 The server is configured to authenticate users with both a client certificate and a username/password — the same credentials used to log in to the web interface. It is not possible to require username and password only for specific profiles due to an OpenVPN server configuration limitation.
 
+## Certificate revocation list (CRL)
+The installer sets up a `vpnadmin-renew-crl.timer` systemd timer that regenerates the OpenVPN CRL weekly, independently of the web app. This matters because a CRL has its own expiry (`default_crl_days = 30` in `openssl.cnf`) separate from any individual certificate — if it's never reissued, OpenVPN starts rejecting **every** client once it expires, not just revoked ones. The admin UI's Server page shows the CRL's current validity as a backstop in case the timer ever fails. If you're updating an existing install from before this timer existed, re-run `install/install.sh` to pick it up (already-completed steps are skipped automatically).
+
 ## Recommendation
 It is recommended to enable automatic OS updates on the VPN server, preferably via unattended-upgrades. All installed packages come from the standard Debian repository.

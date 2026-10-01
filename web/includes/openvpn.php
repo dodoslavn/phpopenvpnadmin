@@ -234,6 +234,31 @@ function revoke_client_cert(string $serial): bool {
     return pki_generate_crl();
 }
 
+// ── CRL status ───────────────────────────────────────────────────────────
+
+/**
+ * Reads the CRL's own nextUpdate field (not a cert expiry) — if it passes,
+ * OpenVPN's crl-verify rejects every client, not just revoked ones.
+ * The vpnadmin-renew-crl.timer keeps this far from expiry in normal
+ * operation; this is a visible backstop in case that timer ever fails.
+ */
+function crl_status(): ?array {
+    $path = PKI_DIR . '/crl.pem';
+    if (!is_readable($path)) return null;
+
+    $out = shell_exec('openssl crl -in ' . escapeshellarg($path) . ' -noout -nextupdate 2>/dev/null');
+    if (!$out || !preg_match('/nextUpdate=(.+)/', $out, $m)) return null;
+
+    $nextUpdate = strtotime(trim($m[1]));
+    if ($nextUpdate === false) return null;
+
+    return [
+        'next_update'    => $nextUpdate,
+        'expired'        => $nextUpdate < time(),
+        'expiring_soon'  => $nextUpdate < time() + 7 * 86400,
+    ];
+}
+
 // ── OpenVPN status ────────────────────────────────────────────────────────
 
 function openvpn_status(): array {
