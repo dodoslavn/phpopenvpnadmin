@@ -14,9 +14,10 @@ server:
     do-udp: yes
     do-tcp: yes
 
-    # Only allow queries from VPN subnet
+    # Only allow queries from VPN clients and the local host
     access-control: 0.0.0.0/0 refuse
     access-control: 10.8.0.0/24 allow
+    access-control: 127.0.0.0/8 allow
 
     # Recursive resolver — no forwarders
     do-not-query-localhost: no
