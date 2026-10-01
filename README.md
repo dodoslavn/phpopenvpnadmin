@@ -39,6 +39,12 @@ Clone the repository:
 Run the installation script (can be safely re-run):
 > ./install/install.sh
 
+Already-completed steps are skipped on rerun. If a step's script itself changed (e.g. after `git pull`) and you need it to apply on an existing install, force just that step instead of reinstalling everything:
+> ./install/install.sh --force 14,18b
+
+Or force every step to run again:
+> ./install/install.sh --force all
+
 ## Using your own HTTPS certificate
 Once the installation script has finished, you can replace the self-signed SSL certificate and private key with a CA-signed one by replacing your files in:
 > /etc/vpnadmin/ssl/
