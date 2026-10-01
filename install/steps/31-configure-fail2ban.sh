@@ -41,7 +41,15 @@ EOF
 systemctl enable fail2ban >/dev/null 2>&1
 systemctl restart fail2ban || error "Failed to start fail2ban"
 
-fail2ban-client status >/dev/null 2>&1 || error "fail2ban not responding"
+# fail2ban-server daemonizes and can take a second or two to open its socket
+# after "systemctl restart" returns — poll instead of checking immediately,
+# otherwise this step intermittently fails even though fail2ban comes up fine.
+ready=0
+for _ in $(seq 1 20); do
+    fail2ban-client status >/dev/null 2>&1 && { ready=1; break; }
+    sleep 0.5
+done
+[ "$ready" -eq 1 ] || error "fail2ban not responding"
 log "fail2ban running (SSH + OpenVPN jails active)"
 
 complete_step
