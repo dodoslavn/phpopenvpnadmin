@@ -114,16 +114,19 @@ html_nav($user);
                 <?php endforeach; ?>
             </tbody>
         </table></div>
-        <?php if ($redisInfo): ?>
-        <p style="margin-top:.75rem;font-size:13px;color:var(--muted)">
-            <?= t('server.redis.info', [
-                'version' => h($redisInfo['version']),
-                'memory'  => h($redisInfo['memory']),
-                'keys'    => h((string) $redisInfo['keys']),
-            ]) ?>
-        </p>
-        <?php endif; ?>
     </div>
+
+    <?php if ($redisInfo): ?>
+    <div class="section">
+        <h3><?= t('server.redis') ?></h3>
+        <div class="table-wrap"><table>
+            <tbody>
+                <tr><td style="width:40%;color:var(--muted)"><?= t('server.redis.memory') ?></td><td><?= h($redisInfo['memory']) ?></td></tr>
+                <tr><td style="width:40%;color:var(--muted)"><?= t('server.redis.keys') ?></td><td><?= h((string) $redisInfo['keys']) ?></td></tr>
+            </tbody>
+        </table></div>
+    </div>
+    <?php endif; ?>
 
     <div class="section">
         <h3><?= t('server.control') ?></h3>

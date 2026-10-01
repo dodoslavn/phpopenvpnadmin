@@ -14,7 +14,7 @@ $errors  = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'display_name') {
     $displayName = trim($_POST['display_name'] ?? '');
 
-    if (mb_strlen($displayName) > 64) {
+    if (strlen($displayName) > 64) {
         $errors[] = t('account.err.display_name');
     } else {
         db()->prepare('UPDATE users SET display_name = ? WHERE id = ?')

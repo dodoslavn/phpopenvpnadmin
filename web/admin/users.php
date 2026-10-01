@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = t('users.err.username');
         if (strlen($password) < 8)
             $errors[] = t('users.err.password');
-        if (mb_strlen($displayName) > 64)
+        if (strlen($displayName) > 64)
             $errors[] = t('account.err.display_name');
 
         if (empty($errors)) {

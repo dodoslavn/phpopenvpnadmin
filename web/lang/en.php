@@ -90,7 +90,9 @@ return [
     'server.sec.banned_now'    => 'Currently Banned',
     'server.sec.banned_total'  => 'Total Banned',
     'server.sec.unavailable'   => 'unavailable',
-    'server.redis.info'        => 'Redis v{version} — {memory} used, {keys} key(s)',
+    'server.redis'             => 'Redis',
+    'server.redis.memory'      => 'Memory Used',
+    'server.redis.keys'        => 'Keys',
 
     // Settings
     'settings.title'           => 'Settings',
